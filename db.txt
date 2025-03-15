@@ -1,0 +1,49 @@
+db.pages.insertMany([
+    {
+        '_id': 1,
+        'name': 'Поурочный план №1',
+        'category': 'Математика',
+        'download_link': 'link1',
+        'author': 1,
+        'reviews': [
+            {
+                'rate': 5,
+                'comment': 'Детям понравилось'
+            },
+            {
+                'rate': 4,
+                'comment': 'Неплохо, но есть куда расти'
+            }]
+    },
+    {
+        '_id': 2,
+        'name': 'Поурочный план №2',
+        'category': 'Русский язык',
+        'download_link': 'link2',
+        'author': 2,
+        'reviews': [
+            {
+                'rate': 3,
+                'comment': 'Недостаточно примеров'
+            },
+            {
+                'rate': 4,
+                'comment': 'Пойдёт'
+            }]
+    },
+    {
+         '_id': 3,
+         'name': 'Поурочный план №3',
+         'category': 'Физика',
+         'download_link': 'link3',
+         'author': 1,
+         'reviews': [
+             {
+                 'rate': 4,
+                 'comment': 'Хорошо сделано'
+             },
+             {
+                 'rate': 4,
+                 'comment': 'Немного не понятны некоторые моменты'
+             }]
+     }])
