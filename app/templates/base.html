@@ -11,7 +11,11 @@
 <body>
 <div>Проект для преподавателей:
     <a href="{{ url_for('index') }}">Домашняя страница</a>
+    {% if current_user.is_anonymous %}
     <a href="{{ url_for('login') }}">Вход</a>
+    {% else %}
+    <a href="{{ url_for('logout') }}">Выход</a>
+    {% endif %}
 </div>
 <hr>
 {% with messages = get_flashed_messages() %}

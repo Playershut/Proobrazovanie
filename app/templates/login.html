@@ -2,12 +2,13 @@
 
 {% block content %}
 <h1>Вход</h1>
+<p>Новый пользователь? <a href="{{ url_for('register') }}">Нажмите, чтобы зарегистрироваться!</a></p>
 <form action="" method="post" novalidate>
     {{ form.hidden_tag() }}
     <p>
         {{ form.username.label }}<br>
         {{ form.username(size=32) }} <br>
-        {% for error in form.password.errors %}
+        {% for error in form.username.errors %}
         <span style="color: red;">[{{ error }}]</span>
         {% endfor %}
     </p>
