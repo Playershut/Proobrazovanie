@@ -4,19 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="48423395-0e03-4b08-8e22-18f2f5453d74" name="Changes" comment="Added app package&#10;Added dotenv&#10;Added templates&#10;Added basic logic">
-      <change afterPath="$PROJECT_DIR$/app/templates/register.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/forms.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/routes.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routes.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/templates/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/templates/base.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/templates/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/templates/login.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/templates/login.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/migrations/versions/1d7585d1ef55_.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/migrations/versions/cfe40b36c9a6_.py" beforeDir="false" />
-    </list>
+    <list default="true" id="48423395-0e03-4b08-8e22-18f2f5453d74" name="Changes" comment="Save before rebase" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -32,6 +20,7 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="RESET_MODE" value="MIXED" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 7
@@ -128,7 +117,23 @@
       <option name="project" value="LOCAL" />
       <updated>1742050034599</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Added authorisation system&#10;Added new tables to DB">
+      <option name="closed" value="true" />
+      <created>1743106904032</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1743106904032</updated>
+    </task>
+    <task id="LOCAL-00003" summary="Save before rebase">
+      <option name="closed" value="true" />
+      <created>1743107655520</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1743107655520</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -144,6 +149,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Added app package&#10;Added dotenv&#10;Added templates&#10;Added basic logic" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added app package&#10;Added dotenv&#10;Added templates&#10;Added basic logic" />
+    <MESSAGE value="Added authorisation system&#10;Added new tables to DB" />
+    <MESSAGE value="Save before rebase" />
+    <option name="LAST_COMMIT_MESSAGE" value="Save before rebase" />
   </component>
 </project>
