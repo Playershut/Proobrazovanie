@@ -44,3 +44,17 @@ class RegistrationForm(FlaskForm):
             Teacher.email == email.data))
         if user is not None:
             raise ValidationError('Пожалуйста, используйте другой почтовый адрес')
+
+
+class EditProfileForm(FlaskForm):
+    username = StringField('Логин', validators=[DataRequired()])
+    about = TextAreaField('О себе', validators=[Length(max=256)])
+    subjects = SelectMultipleField('Преподаваемые предметы', validators=[DataRequired()], choices=[])
+    educational_institution = SelectField('Учебное заведение', validators=[DataRequired()], choices=[])
+    submit = SubmitField('Подтвердить')
+
+    def __init__(self, *args, **kwargs):
+        super(EditProfileForm, self).__init__(*args, **kwargs)
+
+        self.subjects.choices = [(sub.id, sub.name) for sub in Subject.query.all()]
+        self.educational_institution.choices = [(ei.id, ei.name) for ei in EducationalInstitution.query.all()]
