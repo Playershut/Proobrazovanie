@@ -34,27 +34,33 @@ class RegistrationForm(FlaskForm):
         self.educational_institution.choices = [(ei.id, ei.name) for ei in EducationalInstitution.query.all()]
 
     def validate_username(self, username):
-        user = db.session.scalar(sa.select(Teacher).where(
-            Teacher.username == username.data))
+        user = db.session.scalar(sa.select(Teacher).where(Teacher.username == username.data))
         if user is not None:
             raise ValidationError('Пожалуйста, используйте другой логин')
 
     def validate_email(self, email):
-        user = db.session.scalar(sa.select(Teacher).where(
-            Teacher.email == email.data))
+        user = db.session.scalar(sa.select(Teacher).where(Teacher.email == email.data))
         if user is not None:
             raise ValidationError('Пожалуйста, используйте другой почтовый адрес')
 
 
 class EditProfileForm(FlaskForm):
     username = StringField('Логин', validators=[DataRequired()])
+    full_name = StringField('ФИО', validators=[DataRequired()])
     about = TextAreaField('О себе', validators=[Length(max=256)])
     subjects = SelectMultipleField('Преподаваемые предметы', validators=[DataRequired()], choices=[])
     educational_institution = SelectField('Учебное заведение', validators=[DataRequired()], choices=[])
     submit = SubmitField('Подтвердить')
 
-    def __init__(self, *args, **kwargs):
-        super(EditProfileForm, self).__init__(*args, **kwargs)
+    def __init__(self, original_username, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
-        self.subjects.choices = [(sub.id, sub.name) for sub in Subject.query.all()]
+        self.original_username = original_username
+        self.subjects.choices = [(s.id, s.name) for s in Subject.query.all()]
         self.educational_institution.choices = [(ei.id, ei.name) for ei in EducationalInstitution.query.all()]
+
+    def validate_username(self, username):
+        if username.data != self.original_username:
+            user = db.session.scalar(sa.select(Teacher).where(Teacher.username == self.username.data))
+            if user is not None:
+                raise ValidationError('Please use a different username.')
