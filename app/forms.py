@@ -1,11 +1,12 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField, SelectField, widgets
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, SelectField, DecimalField
 from wtforms.fields.choices import SelectMultipleField
 from wtforms.fields.simple import TextAreaField
 from wtforms.validators import DataRequired, ValidationError, Email, EqualTo, Length
 import sqlalchemy as sa
 from app import db
-from app.models import Teacher, Subject, EducationalInstitution
+from app.models import Teacher, Subject, EducationalInstitution, Grade, TypeOfWork
+from flask_login import current_user
 
 
 class LoginForm(FlaskForm):
@@ -63,4 +64,47 @@ class EditProfileForm(FlaskForm):
         if username.data != self.original_username:
             user = db.session.scalar(sa.select(Teacher).where(Teacher.username == self.username.data))
             if user is not None:
-                raise ValidationError('Please use a different username.')
+                raise ValidationError('Пожалуйста, используйте другоой логин')
+
+
+class PageAddForm(FlaskForm):
+    name = StringField('Название', validators=[DataRequired(), Length(min=1, max=128)])
+    description = TextAreaField('Описание', validators=[Length(max=512)])
+    grade = SelectField('Класс/курс', validators=[DataRequired()], choices=[])
+    type_of_work = SelectField('Тип работы', validators=[DataRequired()], choices=[])
+    subject = SelectField('Предмет', validators=[DataRequired()], choices=[])
+    submit = SubmitField('Подтвердить')
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.grade.choices = [(g.id, g.name) for g in Grade.query.order_by(Grade.id).all()]
+        self.type_of_work.choices = [(tow.id, tow.name) for tow in TypeOfWork.query.order_by(TypeOfWork.id).all()]
+        self.subject.choices = [(s.id, s.name) for s in current_user.subjects]
+
+
+class ReviewAddForm(FlaskForm):
+    rate = SelectField('Оценка', validators=[DataRequired()], choices=[])
+    comment = TextAreaField('Комментарий')
+    submit = SubmitField('Оставить отзыв')
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.rate.choices = [(i, i) for i in range(1, 6)]
+
+
+class EditPageForm(FlaskForm):
+    name = StringField('Название', validators=[DataRequired(), Length(min=1, max=128)])
+    description = TextAreaField('Описание', validators=[Length(max=512)])
+    grade = SelectField('Класс/курс', validators=[DataRequired()], choices=[])
+    type_of_work = SelectField('Тип работы', validators=[DataRequired()], choices=[])
+    subject = SelectField('Предмет', validators=[DataRequired()], choices=[])
+    submit = SubmitField('Подтвердить')
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.grade.choices = [(g.id, g.name) for g in Grade.query.order_by(Grade.id).all()]
+        self.type_of_work.choices = [(tow.id, tow.name) for tow in TypeOfWork.query.order_by(TypeOfWork.id).all()]
+        self.subject.choices = [(s.id, s.name) for s in current_user.subjects]

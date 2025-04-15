@@ -9,11 +9,13 @@
     {% endif %}
 </head>
 <body>
-<div>Проект для преподавателей:
+<div>ПроОбразование:
     <a href="{{ url_for('index') }}">Домашняя страница</a>
+    <a href="{{ url_for('explore') }}">Поиск</a>
     {% if current_user.is_anonymous %}
     <a href="{{ url_for('login') }}">Вход</a>
     {% else %}
+    <a href="{{ url_for('add_page') }}">Добавить статью</a>
     <a href="{{ url_for('user', username=current_user.username) }}">Профиль</a>
     <a href="{{ url_for('logout') }}">Выход</a>
     {% endif %}

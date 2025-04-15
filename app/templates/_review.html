@@ -1,0 +1,15 @@
+<table>
+    <tr valign="top">
+        <td><img src="{{ review.author.avatar(36) }}"></td>
+        <td>
+            <a href="{{ url_for('user', username=review.author.username) }}">
+                {{ review.author.full_name }}
+            </a>
+            оставил(а) отзыв:<br> Оценка: {{ review.rate }} <br> {{ review.comment }}
+            {% if review.author == current_user %}
+            <br>
+            <a>Удалить отзыв</a>
+            {% endif %}
+        </td>
+    </tr>
+</table>

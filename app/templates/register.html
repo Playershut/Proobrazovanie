@@ -41,7 +41,7 @@
         </p>
         <p>
             {{ form.about.label }}<br>
-            {{ form.about(rows=8, cols=32, maxlength=256, style="resize: none;") }}<br>
+            {{ form.about(cols=32, rows=8, maxlength=256, style="resize: none;") }}<br>
             {% for error in form.about.errors %}
             <span style="color: red;">[{{ error }}]</span>
             {% endfor %}

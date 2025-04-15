@@ -3,29 +3,24 @@ from flask_login import current_user, login_user, logout_user, login_required
 import sqlalchemy as sa
 from urllib.parse import urlsplit
 from app import app, db
-from app.models import Teacher, Subject
-from app.forms import LoginForm, RegistrationForm, EditProfileForm
+from app.models import Teacher, Subject, Page, Review
+from app.forms import LoginForm, RegistrationForm, EditProfileForm, PageAddForm, ReviewAddForm, EditPageForm
 
 
-@app.route('/')
-@app.route('/index')
+@app.route('/', methods=['GET', 'POST'])
+@app.route('/index', methods=['GET', 'POST'])
 @login_required
 def index():
-    posts = [
-        {
-            'author': {'username': 'Иван'},
-            'body': 'Поурочный план №1 Математика'
-        },
-        {
-            'author': {'username': 'Александр'},
-            'body': 'Поурочный план №2 Русский язык'
-        },
-        {
-            'author': {'username': 'Иван'},
-            'body': 'Поурочный план №3 Физика'
-        }
-    ]
-    return render_template('index.html', title='Домашняя страница', posts=posts)
+    page = request.args.get('page', 1, type=int)
+    query = sa.select(Page).order_by(Page.timestamp.desc())
+    posts = db.paginate(query, page=page, per_page=app.config['POSTS_PER_PAGE'],
+                        error_out=False)
+    next_url = url_for('index', page=posts.next_num) \
+        if posts.has_next else None
+    prev_url = url_for('index', page=posts.prev_num) \
+        if posts.has_prev else None
+    return render_template('index.html', title='Домашняя страница', posts=posts.items,
+                           next_url=next_url, prev_url=prev_url)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -76,11 +71,17 @@ def register():
 @login_required
 def user(username):
     user = db.first_or_404(sa.select(Teacher).where(Teacher.username == username))
-    posts = [
-        {'author': user, 'body': 'Тест №1'},
-        {'author': user, 'body': 'Тест №2'}
-    ]
-    return render_template('user.html', user=user, posts=posts)
+    page = request.args.get('page', 1, type=int)
+    query = user.pages.select().order_by(Page.timestamp.desc())
+    posts = db.paginate(query, page=page,
+                        per_page=app.config['POSTS_PER_PAGE'],
+                        error_out=False)
+    next_url = url_for('user', username=user.username, page=posts.next_num) \
+        if posts.has_next else None
+    prev_url = url_for('user', username=user.username, page=posts.prev_num) \
+        if posts.has_prev else None
+    return render_template('user.html', user=user, title='Профиль {}'.format(username), posts=posts.items,
+                           next_url=next_url, prev_url=prev_url)
 
 
 @app.route('/edit_profile', methods=['GET', 'POST'])
@@ -100,6 +101,83 @@ def edit_profile():
         form.username.data = current_user.username
         form.full_name.data = current_user.full_name
         form.about.data = current_user.about
-        form.educational_institution.data = current_user.educational_institution
+        form.educational_institution.data = str(current_user.educational_institution)
         form.subjects.data = [str(s.id) for s in current_user.subjects]
     return render_template('edit_profile.html', title='Редактирование профиля', form=form)
+
+
+@app.route('/explore')
+@login_required
+def explore():
+    page = request.args.get('page', 1, type=int)
+    query = sa.select(Page).order_by(Page.timestamp.desc())
+    posts = db.paginate(query, page=page, per_page=app.config['POSTS_PER_PAGE'], error_out=False)
+    next_url = url_for('explore', page=posts.next_num) \
+        if posts.has_next else None
+    prev_url = url_for('explore', page=posts.prev_num) \
+        if posts.has_prev else None
+    return render_template('index.html', title='Исследование', posts=posts.items,
+                           next_url=next_url, prev_url=prev_url)
+
+
+@app.route('/add_page')
+@login_required
+def add_page():
+    form = PageAddForm()
+    if form.validate_on_submit():
+        post = Page(name=form.name.data,
+                    description=form.description.data,
+                    grade=form.grade.data,
+                    type_of_work=form.type_of_work.data,
+                    subject=form.subject.data,
+                    author=current_user)
+        db.session.add(post)
+        db.session.commit()
+        flash('Вы выложили статью!')
+        return redirect(url_for('index'))
+    return render_template('add_page.html', title='Добавление статьи', form=form)
+
+
+@app.route('/page/<id>', methods=['GET', 'POST'])
+@login_required
+def page(id):
+    form = ReviewAddForm()
+    page = db.first_or_404(sa.select(Page).where(Page.id == id))
+    reviews_adding_visibility = page.author != current_user and all([r.author != current_user for r in page.reviews])
+    if form.validate_on_submit():
+        review = Review(rate=form.rate.data,
+                        comment=form.comment.data,
+                        author=current_user,
+                        page=page)
+        db.session.add(review)
+        db.session.commit()
+        reviews = page.reviews
+        page.average_rating = sum([r.rate for r in reviews]) / len(reviews)
+        db.session.commit()
+        flash('Вы оставили отзыв')
+        return redirect(url_for('page', id=page.id))
+    return render_template('page.html', page=page, title=page.name, form=form, reviews=page.reviews,
+                           rav=reviews_adding_visibility)
+
+
+@app.route('/edit_page/<id>', methods=['GET', 'POST'])
+@login_required
+def edit_page(id):
+    page = db.first_or_404(sa.select(Page).where(Page.id == id).where(Page.author == current_user))
+    form = EditPageForm()
+    if form.validate_on_submit():
+        page.name = form.name.data
+        page.description = form.description.data
+        page.grade = form.grade.data
+        page.type_of_work = form.type_of_work.data
+        page.subject = form.subject.data
+        db.session.commit()
+        flash('Ваши изменения сохранены.')
+        return redirect(url_for('edit_page', id=page.id))
+    elif request.method == 'GET':
+        form.name.data = page.name
+        form.description.data = page.description
+        form.grade.data = str(page.grade)
+        form.type_of_work.data = str(page.type_of_work)
+        form.subject.data = str(page.subject)
+    return render_template('edit_page.html', title='Редактирование статьи', form=form)

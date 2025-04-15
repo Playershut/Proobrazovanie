@@ -20,7 +20,7 @@
         </p>
         <p>
             {{ form.about.label }}<br>
-            {{ form.about(rows=8, cols=32) }}<br>
+            {{ form.about(cols=32, rows=8) }}<br>
             {% for error in form.about.errors %}
             <span style="color: red;">[{{ error }}]</span>
             {% endfor %}

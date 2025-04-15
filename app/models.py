@@ -29,6 +29,10 @@ class Subject(db.Model):
 
     teachers: so.Mapped[list['Teacher']] = so.relationship('Teacher', secondary=teacher_subject,
                                                            back_populates='subjects')
+    pages: so.Mapped[list['Page']] = so.relationship(back_populates='sub')
+
+    def __repr__(self):
+        return '<Subject {}>'.format(self.name)
 
 
 class Region(db.Model):
@@ -98,28 +102,35 @@ class TypeOfWork(db.Model):
     id: so.Mapped[int] = so.mapped_column(primary_key=True)
     name: so.Mapped[str] = so.mapped_column(sa.String(64), index=True, unique=True)
 
+    pages: so.Mapped[list['Page']] = so.relationship(back_populates='tow')
+
 
 class Grade(db.Model):
     __tablename__ = 'grades'
     id: so.Mapped[int] = so.mapped_column(primary_key=True)
     name: so.Mapped[str] = so.mapped_column(sa.String(8), index=True, unique=True)
 
+    pages: so.Mapped[list['Page']] = so.relationship(back_populates='grd')
+
 
 class Page(db.Model):
     __tablename__ = 'pages'
     id: so.Mapped[int] = so.mapped_column(primary_key=True)
     name: so.Mapped[str] = so.mapped_column(sa.String(128), index=True)
-    description: so.Mapped[str] = so.mapped_column(sa.String(512))
+    description: so.Mapped[Optional[str]] = so.mapped_column(sa.String(512))
     teacher_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey(Teacher.id), index=True)
     timestamp: so.Mapped[datetime] = so.mapped_column(index=True, default=lambda: datetime.now(timezone.utc))
-    link: so.Mapped[str] = so.mapped_column(sa.String(64))
-    average_rating: so.Mapped[float] = so.mapped_column(sa.Float(1))
-    type_of_work_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey(TypeOfWork.id), index=True)
-    subject: so.Mapped[int] = so.mapped_column(sa.ForeignKey(Subject.id), index=True)
+    link: so.Mapped[Optional[str]] = so.mapped_column(sa.String(64))
+    average_rating: so.Mapped[float] = so.mapped_column(sa.Float(1), default=0)
     grade: so.Mapped[int] = so.mapped_column(sa.ForeignKey(Grade.id), index=True)
+    type_of_work: so.Mapped[int] = so.mapped_column(sa.ForeignKey(TypeOfWork.id), index=True)
+    subject: so.Mapped[int] = so.mapped_column(sa.ForeignKey(Subject.id), index=True)
 
     reviews: so.Mapped[list['Review']] = so.relationship(back_populates='page')
     author: so.Mapped['Teacher'] = so.relationship(back_populates='pages')
+    tow: so.Mapped['TypeOfWork'] = so.relationship(back_populates='pages')
+    sub: so.Mapped['Subject'] = so.relationship(back_populates='pages')
+    grd: so.Mapped['Grade'] = so.relationship(back_populates='pages')
 
     def __repr__(self):
         return '<Page {}>'.format(self.description)
@@ -129,6 +140,7 @@ class Review(db.Model):
     __tablename__ = 'reviews'
     id: so.Mapped[int] = so.mapped_column(primary_key=True)
     rate: so.Mapped[int] = so.mapped_column()
+    timestamp: so.Mapped[datetime] = so.mapped_column(index=True, default=lambda: datetime.now(timezone.utc))
     comment: so.Mapped[str] = so.mapped_column(sa.String(256))
     author_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey(Teacher.id), index=True)
     page_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey(Page.id), index=True)

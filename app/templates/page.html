@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block content %}
+<table>
+    <tr valign="top">
+        <td>
+            <h1>Cтатья: {{ page.name }}</h1>
+            <p>{{ page.timestamp }}</p>
+            <a href="{{ url_for('user', username=page.author.username) }}">
+                {{ page.author.full_name }}
+            </a>
+            <p>Оценка: {{ page.average_rating }}</p>
+            <p>Категории:</p>
+            <p>{{ page.tow.name }}, {{ page.sub.name }}, {{ page.grd.name }}</p>
+            {% if page.author == current_user %}
+            <p><a href="{{ url_for('edit_page', id=page.id) }}">Редактировать статью</a></p>
+            {% endif %}
+            {% if page.description %}<p>{{ page.description }}</p>{% endif %}
+        </td>
+    </tr>
+</table>
+<hr>
+{% if rav %}
+<form action="" method="post">
+    {{ form.hidden_tag() }}
+    <p>
+        {{ form.rate.label }}<br>
+        {{ form.rate }}<br>
+        {% for error in form.rate.errors %}
+        <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+    </p>
+    <p>
+        {{ form.comment.label }}<br>
+        {{ form.comment(cols=32, rows=8) }}<br>
+        {% for error in form.comment.errors %}
+        <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+    </p>
+    <p>{{ form.submit() }}</p>
+</form>
+{% endif %}
+{% for review in reviews %}
+{% include '_review.html' %}
+{% endfor %}
+{% if prev_url %}
+<a href="{{ prev_url }}">Новые отзывы</a>
+{% endif %}
+{% if next_url %}
+<a href="{{ next_url }}">Старые отзывы</a>
+{% endif %}
+{% endblock %}
