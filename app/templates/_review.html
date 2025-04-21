@@ -1,14 +1,22 @@
-<table>
-    <tr valign="top">
-        <td><img src="{{ review.author.avatar(36) }}"></td>
+<table class="table table-hover">
+    <tr>
+        <td width="70px">
+            <a href="{{ url_for('user', username=review.author.username) }}">
+                <img src="{{ review.author.avatar(70) }}"/>
+            </a>
+        </td>
         <td>
             <a href="{{ url_for('user', username=review.author.username) }}">
                 {{ review.author.full_name }}
             </a>
-            оставил(а) отзыв:<br> Оценка: {{ review.rate }} <br> {{ review.comment }}
+            оставил(а) отзыв {{ moment(review.timestamp).fromNow() }}:<br>
+            Оценка: {{ review.rate }} <br>
+            {{ review.comment }}
             {% if review.author == current_user %}
             <br>
-            <a>Удалить отзыв</a>
+            <a href="{{ url_for('page', id=review.page_id, delete=review.id) }}">
+                Удалить отзыв
+            </a>
             {% endif %}
         </td>
     </tr>

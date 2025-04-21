@@ -3,8 +3,10 @@ from flask_login import current_user, login_user, logout_user, login_required
 import sqlalchemy as sa
 from urllib.parse import urlsplit
 from app import app, db
+from app.email import send_password_reset_email
 from app.models import Teacher, Subject, Page, Review
-from app.forms import LoginForm, RegistrationForm, EditProfileForm, PageAddForm, ReviewAddForm, EditPageForm
+from app.forms import LoginForm, RegistrationForm, EditProfileForm, PageAddForm, ReviewAddForm, EditPageForm, \
+    ResetPasswordRequestForm, ResetPasswordForm
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -143,6 +145,14 @@ def add_page():
 def page(id):
     form = ReviewAddForm()
     page = db.first_or_404(sa.select(Page).where(Page.id == id))
+
+    review_id = request.args.get('delete', 0, type=int)
+    review = Review.query.get(review_id)
+    if review and review.author == current_user and review.page == page:
+        db.session.delete(review)
+        db.session.commit()
+        flash('Отзыв был удалён')
+
     reviews_adding_visibility = page.author != current_user and all([r.author != current_user for r in page.reviews])
     if form.validate_on_submit():
         review = Review(rate=form.rate.data,
@@ -181,3 +191,34 @@ def edit_page(id):
         form.type_of_work.data = str(page.type_of_work)
         form.subject.data = str(page.subject)
     return render_template('edit_page.html', title='Редактирование статьи', form=form)
+
+
+@app.route('/reset_password_request', methods=['GET', 'POST'])
+def reset_password_request():
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+    form = ResetPasswordRequestForm()
+    if form.validate_on_submit():
+        user = db.session.scalar(
+            sa.select(Teacher).where(Teacher.email == form.email.data))
+        if user:
+            send_password_reset_email(user)
+        flash('Проверьте Вашу электронную почту для инструкций по сбросу пароля')
+        return redirect(url_for('login'))
+    return render_template('reset_password_request.html', title='Сброс пароля', form=form)
+
+
+@app.route('/reset_password/<token>', methods=['GET', 'POST'])
+def reset_password(token):
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+    user = Teacher.verify_reset_password_token(token)
+    if not user:
+        return redirect(url_for('index'))
+    form = ResetPasswordForm()
+    if form.validate_on_submit():
+        user.set_password(form.password.data)
+        db.session.commit()
+        flash('Ваш пароль был сброшен.')
+        return redirect(url_for('login'))
+    return render_template('reset_password.html', form=form)

@@ -108,3 +108,15 @@ class EditPageForm(FlaskForm):
         self.grade.choices = [(g.id, g.name) for g in Grade.query.order_by(Grade.id).all()]
         self.type_of_work.choices = [(tow.id, tow.name) for tow in TypeOfWork.query.order_by(TypeOfWork.id).all()]
         self.subject.choices = [(s.id, s.name) for s in current_user.subjects]
+
+
+class ResetPasswordRequestForm(FlaskForm):
+    email = StringField('Электронная почта', validators=[DataRequired(), Email()])
+    submit = SubmitField('Запросить сброс пароля')
+
+
+class ResetPasswordForm(FlaskForm):
+    password = PasswordField('Пароль', validators=[DataRequired()])
+    password2 = PasswordField(
+        'Повтор пароля', validators=[DataRequired(), EqualTo('password')])
+    submit = SubmitField('Запросить сброс пароля')

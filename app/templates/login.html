@@ -20,6 +20,10 @@
         {% endfor %}
     </p>
     <p>{{ form.remember_me() }} {{ form.remember_me.label }}</p>
+    <p>
+        Забыли пароль?
+        <a href="{{ url_for('reset_password_request') }}">Нажмите для восстановления</a>
+    </p>
     <p>{{ form.submit() }}</p>
 </form>
 {% endblock %}

@@ -1,44 +1,7 @@
 {% extends "base.html" %}
+{% import 'bootstrap_wtf.html' as wtf %}
 
 {% block content %}
-<h1>Добавление статьи</h1>
-<form action="" method="post">
-    {{ form.hidden_tag() }}
-    <p>
-        {{ form.name.label }}<br>
-        {{ form.name(size=32) }}<br>
-        {% for error in form.name.errors %}
-        <span style="color: red;">[{{ error }}]</span>
-        {% endfor %}
-    </p>
-    <p>
-        {{ form.description.label }}<br>
-        {{ form.description(cols=32, rows=8) }}<br>
-        {% for error in form.description.errors %}
-        <span style="color: red;">[{{ error }}]</span>
-        {% endfor %}
-    </p>
-    <p>
-        {{ form.grade.label }}<br>
-        {{ form.grade }}<br>
-        {% for error in form.grade.errors %}
-        <span style="color: red;">[{{ error }}]</span>
-        {% endfor %}
-    </p>
-    <p>
-        {{ form.type_of_work.label }}<br>
-        {{ form.type_of_work }}<br>
-        {% for error in form.type_of_work.errors %}
-        <span style="color: red;">[{{ error }}]</span>
-        {% endfor %}
-    </p>
-    <p>
-        {{ form.subject.label }}<br>
-        {{ form.subject }}<br>
-        {% for error in form.subject.errors %}
-        <span style="color: red;">[{{ error }}]</span>
-        {% endfor %}
-    </p>
-    <p>{{ form.submit() }}</p>
-</form>
+    <h1>Добавление статьи</h1>
+    {{ wtf.quick_form(form) }}
 {% endblock %}

@@ -1,11 +1,12 @@
 {% extends "base.html" %}
+{% import 'bootstrap_wtf.html' as wtf %}
 
 {% block content %}
 <table>
     <tr valign="top">
         <td>
             <h1>Cтатья: {{ page.name }}</h1>
-            <p>{{ page.timestamp }}</p>
+            <p>{{ moment(page.timestamp).format('D MMMM YYYY') }}</p>
             <a href="{{ url_for('user', username=page.author.username) }}">
                 {{ page.author.full_name }}
             </a>
@@ -21,24 +22,25 @@
 </table>
 <hr>
 {% if rav %}
-<form action="" method="post">
-    {{ form.hidden_tag() }}
-    <p>
-        {{ form.rate.label }}<br>
-        {{ form.rate }}<br>
-        {% for error in form.rate.errors %}
-        <span style="color: red;">[{{ error }}]</span>
-        {% endfor %}
-    </p>
-    <p>
-        {{ form.comment.label }}<br>
-        {{ form.comment(cols=32, rows=8) }}<br>
-        {% for error in form.comment.errors %}
-        <span style="color: red;">[{{ error }}]</span>
-        {% endfor %}
-    </p>
-    <p>{{ form.submit() }}</p>
-</form>
+{{ wtf.quick_form(form) }}
+<!--<form action="" method="post">-->
+<!--    {{ form.hidden_tag() }}-->
+<!--    <p>-->
+<!--        {{ form.rate.label }}<br>-->
+<!--        {{ form.rate }}<br>-->
+<!--        {% for error in form.rate.errors %}-->
+<!--        <span style="color: red;">[{{ error }}]</span>-->
+<!--        {% endfor %}-->
+<!--    </p>-->
+<!--    <p>-->
+<!--        {{ form.comment.label }}<br>-->
+<!--        {{ form.comment(cols=32, rows=8) }}<br>-->
+<!--        {% for error in form.comment.errors %}-->
+<!--        <span style="color: red;">[{{ error }}]</span>-->
+<!--        {% endfor %}-->
+<!--    </p>-->
+<!--    <p>{{ form.submit() }}</p>-->
+<!--</form>-->
 {% endif %}
 {% for review in reviews %}
 {% include '_review.html' %}
