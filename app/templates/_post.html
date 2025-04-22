@@ -2,17 +2,18 @@
     <tr>
         <td width="70px">
             <a href="{{ url_for('user', username=post.author.username) }}">
-                <img src="{{ post.author.avatar(70) }}"/>
+                <img class="avatar" src="{{ post.author.avatar(70) }}"/>
             </a>
         </td>
         <td>
-            <a href="{{ url_for('user', username=post.author.username) }}">
+            <a class="profile-link" href="{{ url_for('user', username=post.author.username) }}">
                 {{ post.author.full_name }}
             </a>
-            выложил(а) {{ moment(post.timestamp).fromNow() }}:<br>
-            <a href="{{ url_for('page', id=post.id) }}">
+            <br>
+            <a class="page-link" href="{{ url_for('page', id=post.id) }}">
                 {{ post.name }}
             </a>
+            <div class="date-footer">Выложил(а) {{ moment(post.timestamp).fromNow() }}</div>
         </td>
     </tr>
 </table>

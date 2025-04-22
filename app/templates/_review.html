@@ -2,14 +2,14 @@
     <tr>
         <td width="70px">
             <a href="{{ url_for('user', username=review.author.username) }}">
-                <img src="{{ review.author.avatar(70) }}"/>
+                <img class="avatar" src="{{ review.author.avatar(70) }}"/>
             </a>
         </td>
         <td>
-            <a href="{{ url_for('user', username=review.author.username) }}">
+            <a class="profile-link" href="{{ url_for('user', username=review.author.username) }}">
                 {{ review.author.full_name }}
             </a>
-            оставил(а) отзыв {{ moment(review.timestamp).fromNow() }}:<br>
+            <br>
             Оценка: {{ review.rate }} <br>
             {{ review.comment }}
             {% if review.author == current_user %}
@@ -18,6 +18,7 @@
                 Удалить отзыв
             </a>
             {% endif %}
+            <div class="date-footer">Оставил(а) отзыв {{ moment(review.timestamp).fromNow() }}</div>
         </td>
     </tr>
 </table>
