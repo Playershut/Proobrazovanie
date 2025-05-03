@@ -12,27 +12,34 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-<header>
-    <div class="container">
-        <h1><a href="{{ url_for('index') }}" style="color: inherit; text-decoration: none;">ПроОбразование</a></h1>
-        <nav>
-            <ul>
-                <li><a href="{{ url_for('index') }}" class="{% if request.endpoint == 'index' %}active{% endif %}">Главная</a>
-                </li>
-                <li><a href="{{ url_for('explore') }}" class="{% if request.endpoint == 'explore' %}active{% endif %}">Поиск</a>
-                </li>
-                {% if current_user.is_anonymous %}
-                <li><a href="{{ url_for('login') }}">Войти</a></li>
-                {% else %}
-                <li><a href="{{ url_for('add_page') }}">Добавить статью</a></li>
-                <li><a href="{{ url_for('user', username=current_user.username) }}">Профиль</a></li>
-                <li><a href="{{ url_for('logout') }}">Выйти</a></li>
-                {% endif %}
-            </ul>
-        </nav>
-    </div>
-</header>
+<header class="d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom header">
+    <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none">
+        <svg class="bi me-2" width="40" height="32" aria-hidden="true">
+            <use xlink:href="#logo"></use>
+        </svg>
+        <span class="fs-4" style="color: var(--color-primary-text)">ПроОбразование</span>
+    </a>
 
+    <ul class="nav nav-pills test">
+        <li class="nav-item"><a href="{{ url_for('index') }}"
+                                class="nav-link {% if request.endpoint == 'index' %}active{% endif %}">Главная</a>
+        </li>
+        <li class="nav-item"><a href="{{ url_for('explore') }}"
+                                class="nav-link {% if request.endpoint == 'explore' %}active{% endif %}">Поиск</a>
+        </li>
+        {% if current_user.is_anonymous %}
+        <li class="nav-item"><a href="{{ url_for('login') }}"
+                                class="nav-link {% if request.endpoint == 'login' %}active{% endif %}">Войти</a></li>
+        {% else %}
+        <li class="nav-item"><a href="{{ url_for('add_page') }}"
+                                class="nav-link {% if request.endpoint == 'add_page' %}active{% endif %}">Добавить
+            статью</a></li>
+        <li class="nav-item"><a href="{{ url_for('user', username=current_user.username) }}"
+                                class="nav-link {% if request.path == '/user/' + current_user.username %}active{% endif %}">Профиль</a></li>
+        <li class="nav-item"><a href="{{ url_for('logout') }}" class="nav-link">Выйти</a></li>
+        {% endif %}
+    </ul>
+</header>
 <main>
     <div class="container">
         {% with messages = get_flashed_messages() %}
@@ -49,16 +56,15 @@
         {% block content %}{% endblock %}
     </div>
 </main>
-
-<footer>
-    <ul class="footer-nav">
-        <li><a href="{{ url_for('index') }}">Главная</a></li>
-        <li><a href="#">FAQ</a></li>
-        <li><a href="#">О нас</a></li>
+<footer class="py-3">
+    <ul class="nav justify-content-center border-bottom pb-3 mb-3">
+        <li class="nav-item"><a href="{{ url_for('index') }}" class="nav-link px-2">Главная</a></li>
+        <li class="nav-item"><a href="" class="nav-link px-2">Политика конфиденциальности</a></li>
+        <li class="nav-item"><a href="" class="nav-link px-2">FAQ</a></li>
+        <li class="nav-item"><a href="" class="nav-link px-2">О нас</a></li>
     </ul>
-    <p class="footer-copy">© 2025 Проект «ПроОбразование»</p>
+    <p class="text-center" style="color: var(--color-primary-text)">© 2025 Проект «ПроОбразование»</p>
 </footer>
-
 {{ moment.include_moment() }}
 {{ moment.lang('ru') }}
 </body>

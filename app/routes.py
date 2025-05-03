@@ -2,11 +2,14 @@ from flask import render_template, flash, redirect, url_for, request
 from flask_login import current_user, login_user, logout_user, login_required
 import sqlalchemy as sa
 from urllib.parse import urlsplit
+
+from sqlalchemy import or_, func
+
 from app import app, db
 from app.email import send_password_reset_email
 from app.models import Teacher, Subject, Page, Review
 from app.forms import LoginForm, RegistrationForm, EditProfileForm, PageAddForm, ReviewAddForm, EditPageForm, \
-    ResetPasswordRequestForm, ResetPasswordForm
+    ResetPasswordRequestForm, ResetPasswordForm, SearchForm
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -108,21 +111,52 @@ def edit_profile():
     return render_template('edit_profile.html', title='Редактирование профиля', form=form)
 
 
-@app.route('/explore')
+@app.route('/explore', methods=['GET', 'POST'])
 @login_required
 def explore():
+    form = SearchForm()
+    if form.validate_on_submit():
+        search = form.search.data
+        grades = form.grades.data
+        subjects = form.subjects.data
+        types_of_work = form.types_of_work.data
+        return redirect(url_for('explore',
+                                search=search,
+                                subjects=','.join(subjects),
+                                grades=','.join(grades),
+                                worktypes=','.join(types_of_work)))
+
+    search = request.args.get('search', None)
+    subjects = request.args.get('subjects', '').split(',')
+    grades = request.args.get('grades', '').split(',')
+    worktypes = request.args.get('worktypes', '').split(',')
     page = request.args.get('page', 1, type=int)
-    query = sa.select(Page).order_by(Page.timestamp.desc())
+
+    query = db.select(Page).order_by(Page.timestamp.desc())
+    if search:
+        search_term = f'%{search.lower()}%'
+        query = query.filter(or_(func.lower(Page.name).like(search_term),
+                                 func.lower(Page.description).like(search_term)))
+    if subjects and '' not in subjects:
+        query = query.where(Page.subject.in_(subjects))
+    if grades and '' not in grades:
+        query = query.where(Page.grade.in_(grades))
+    if worktypes and '' not in worktypes:
+        query = query.where(Page.type_of_work.in_(worktypes))
+
     posts = db.paginate(query, page=page, per_page=app.config['POSTS_PER_PAGE'], error_out=False)
-    next_url = url_for('explore', page=posts.next_num) \
+    next_url = url_for('explore', page=posts.next_num, search=search, subjects=','.join(subjects),
+                       grades=','.join(grades), worktypes=','.join(worktypes)) \
         if posts.has_next else None
-    prev_url = url_for('explore', page=posts.prev_num) \
+    prev_url = url_for('explore', page=posts.prev_num, search=search, subjects=','.join(subjects),
+                       grades=','.join(grades), worktypes=','.join(worktypes)) \
         if posts.has_prev else None
-    return render_template('index.html', title='Исследование', posts=posts.items,
-                           next_url=next_url, prev_url=prev_url)
+    return render_template('explore.html', form=form, title='Поиск', posts=posts.items,
+                           next_url=next_url, prev_url=prev_url, search=search, subjects=','.join(subjects),
+                           grades=','.join(grades), worktypes=','.join(worktypes))
 
 
-@app.route('/add_page')
+@app.route('/add_page', methods=['GET', 'POST'])
 @login_required
 def add_page():
     form = PageAddForm()

@@ -1,6 +1,9 @@
 {% extends "base.html" %}
+{% import 'bootstrap_wtf.html' as wtf %}
+
 {% block content %}
-<h1>Каталог</h1>
+<h1>Поиск</h1>
+{{ wtf.quick_form(form) }}
 {% for post in posts %}
 {% include '_post.html' %}
 {% endfor %}

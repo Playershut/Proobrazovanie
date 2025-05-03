@@ -4,15 +4,16 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="48423395-0e03-4b08-8e22-18f2f5453d74" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/app/static/styles.css" afterDir="false" />
+    <list default="true" id="48423395-0e03-4b08-8e22-18f2f5453d74" name="Changes" comment="Redesign&#10;Added requirements.txt">
+      <change afterPath="$PROJECT_DIR$/app/templates/explore.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/templates/_post.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/templates/_post.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/templates/_review.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/templates/_review.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/forms.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/routes.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routes.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/static/styles.css" beforeDir="false" afterPath="$PROJECT_DIR$/app/static/styles.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/templates/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/templates/base.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/templates/login.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/templates/login.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/templates/bootstrap_wtf.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/templates/bootstrap_wtf.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/templates/index.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/templates/user.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/templates/user.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/config.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -208,7 +209,15 @@
       <option name="project" value="LOCAL" />
       <updated>1745214734371</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="Redesign&#10;Added requirements.txt">
+      <option name="closed" value="true" />
+      <created>1745336704329</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1745336704329</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -230,6 +239,7 @@
     <MESSAGE value="Added error handling&#10;Added full_name to edit_profile" />
     <MESSAGE value="Added reviews&#10;Added page&#10;Added page adding and editing" />
     <MESSAGE value="Added review deletion&#10;Added password reset&#10;Updated forms&#10;Added time processing" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added review deletion&#10;Added password reset&#10;Updated forms&#10;Added time processing" />
+    <MESSAGE value="Redesign&#10;Added requirements.txt" />
+    <option name="LAST_COMMIT_MESSAGE" value="Redesign&#10;Added requirements.txt" />
   </component>
 </project>

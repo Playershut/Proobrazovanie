@@ -120,3 +120,18 @@ class ResetPasswordForm(FlaskForm):
     password2 = PasswordField(
         'Повтор пароля', validators=[DataRequired(), EqualTo('password')])
     submit = SubmitField('Запросить сброс пароля')
+
+
+class SearchForm(FlaskForm):
+    search = StringField('Поиск')
+    grades = SelectMultipleField('Класс/курс', choices=[])
+    types_of_work = SelectMultipleField('Тип работы', choices=[])
+    subjects = SelectMultipleField('Предмет', choices=[])
+    submit = SubmitField('Поиск')
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.grades.choices = [(g.id, g.name) for g in Grade.query.order_by(Grade.id).all()]
+        self.types_of_work.choices = [(tow.id, tow.name) for tow in TypeOfWork.query.order_by(TypeOfWork.id).all()]
+        self.subjects.choices = [(s.id, s.name) for s in Subject.query.order_by(Subject.id).all()]
