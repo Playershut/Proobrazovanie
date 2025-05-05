@@ -250,6 +250,15 @@ td {
     color: var(--color-body-card);
 }
 
+.accordion-button:focus {
+    border-color: var(--color-primary-bg);
+}
+
+.accordion-button:not(.collapsed) {
+    color: var(--color-primary-text);
+    background-color: var(--color-accent);
+}
+
 /* Подвал */
 footer {
     background: var(--color-primary-bg);

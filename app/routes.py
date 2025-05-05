@@ -314,3 +314,18 @@ def download_file(filename):
     page = db.first_or_404(sa.select(Page).where(Page.link == filename))
     directory = current_app.config['UPLOAD_FOLDER']
     return send_from_directory(directory, filename, as_attachment=True, download_name=page.original_filename)
+
+
+@app.route('/privacy_policy')
+def privacy_policy():
+    return render_template('privacy_policy.html', title='Политика конфиденциальности')
+
+
+@app.route('/faq')
+def faq():
+    return render_template('faq.html', title='FAQ')
+
+
+@app.route('/about_us')
+def about_us():
+    return render_template('about_us.html', title='О нас')

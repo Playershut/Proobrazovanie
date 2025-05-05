@@ -4,21 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="48423395-0e03-4b08-8e22-18f2f5453d74" name="Changes" comment="Upgraded SelectMultipleField&#10;Upgraded search page (/explore)&#10;Added badges as tags on pages">
-      <change afterPath="$PROJECT_DIR$/app/templates/403.html" afterDir="false" />
+    <list default="true" id="48423395-0e03-4b08-8e22-18f2f5453d74" name="Changes" comment="Upgraded SelectMultipleField&#10;Upgraded search page (/explore)&#10;Added badges as tags on pages&#10;Added file upload and download&#10;Upgraded logo&#10;Changed header links visibility">
+      <change afterPath="$PROJECT_DIR$/app/templates/about_us.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/templates/faq.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/templates/privacy_policy.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/errors.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/errors.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/forms.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/routes.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routes.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/static/styles.css" beforeDir="false" afterPath="$PROJECT_DIR$/app/static/styles.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/templates/add_page.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/templates/add_page.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/templates/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/templates/base.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/templates/bootstrap_wtf.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/templates/bootstrap_wtf.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/templates/explore.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/templates/explore.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/templates/page.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/templates/page.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/config.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -233,7 +226,15 @@
       <option name="project" value="LOCAL" />
       <updated>1746287577645</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="Upgraded SelectMultipleField&#10;Upgraded search page (/explore)&#10;Added badges as tags on pages&#10;Added file upload and download&#10;Upgraded logo&#10;Changed header links visibility">
+      <option name="closed" value="true" />
+      <created>1746469725689</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1746469725689</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -257,6 +258,7 @@
     <MESSAGE value="Added review deletion&#10;Added password reset&#10;Updated forms&#10;Added time processing" />
     <MESSAGE value="Redesign&#10;Added requirements.txt" />
     <MESSAGE value="Reduced styles.css&#10;Footer is now stuck to the bottom&#10;Added search logic&#10;Other small updates" />
-    <option name="LAST_COMMIT_MESSAGE" value="Reduced styles.css&#10;Footer is now stuck to the bottom&#10;Added search logic&#10;Other small updates" />
+    <MESSAGE value="Upgraded SelectMultipleField&#10;Upgraded search page (/explore)&#10;Added badges as tags on pages&#10;Added file upload and download&#10;Upgraded logo&#10;Changed header links visibility" />
+    <option name="LAST_COMMIT_MESSAGE" value="Upgraded SelectMultipleField&#10;Upgraded search page (/explore)&#10;Added badges as tags on pages&#10;Added file upload and download&#10;Upgraded logo&#10;Changed header links visibility" />
   </component>
 </project>

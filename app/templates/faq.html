@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Часто задаваемые вопросы</h1>
+<div class="accordion" id="faqAccordion">
+    <div class="accordion-item">
+        <h2 class="accordion-header">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapseOne"
+                    aria-expanded="true" aria-controls="faqCollapseOne">
+                Как найти нужные мне учебные материалы?
+            </button>
+        </h2>
+        <div id="faqCollapseOne" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+            <div class="accordion-body">
+                На странице "Поиск" вы можете найти материалы по ключевой строке, классу/курсу, предмету и типу работы.
+            </div>
+        </div>
+    </div>
+    <div class="accordion-item">
+        <h2 class="accordion-header">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#faqCollapseTwo"
+                    aria-expanded="false" aria-controls="faqCollapseTwo">
+                Нужно ли регистрироваться, чтобы пользоваться сайтом?
+            </button>
+        </h2>
+        <div id="faqCollapseTwo" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+            <div class="accordion-body">
+                Да, для использования всех возможностей сайта необходимо зарегистрироваться.
+            </div>
+        </div>
+    </div>
+    <div class="accordion-item">
+        <h2 class="accordion-header">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#faqCollapseThree"
+                    aria-expanded="false" aria-controls="faqCollapseThree">
+                Как добавить свои учебные материалы?
+            </button>
+        </h2>
+        <div id="faqCollapseThree" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+            <div class="accordion-body">
+                Добавление материалов осуществляется через страницу "Добавить статью".
+            </div>
+        </div>
+    </div>
+    <div class="accordion-item">
+        <h2 class="accordion-header">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#faqCollapseFour"
+                    aria-expanded="false" aria-controls="faqCollapseFour">
+                Какие типы файлов я могу загружать?
+            </button>
+        </h2>
+        <div id="faqCollapseFour" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+            <div class="accordion-body">
+                Вы можете загружать файлы следующих форматов: pdf, doc, docx, ppt, pptx, xls, xlsx, odt, ods, odp, txt,
+                rtf. Загрузка изображений не поддерживается.
+            </div>
+        </div>
+    </div>
+    <div class="accordion-item">
+        <h2 class="accordion-header">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#faqCollapseFive"
+                    aria-expanded="false" aria-controls="faqCollapseFive">
+                Что делать, если я не нашёл нужный мне материал?
+            </button>
+        </h2>
+        <div id="faqCollapseFive" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+            <div class="accordion-body">
+                Если вы не нашли необходимый материал, вы можете обратиться в службу поддержки по электронной почте
+                nikitaakubickij@yandex.ru с вашим запросом.
+            </div>
+        </div>
+    </div>
+    <div class="accordion-item">
+        <h2 class="accordion-header">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#faqCollapseSix"
+                    aria-expanded="false" aria-controls="faqCollapseSix">
+                Безопасно ли использовать ваш сервис?
+            </button>
+        </h2>
+        <div id="faqCollapseSix" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+            <div class="accordion-body">
+                В настоящее время мы не используем современные методы шифрования, однако мы планируем внедрить их в
+                будущем для повышения безопасности сервиса.
+            </div>
+        </div>
+    </div>
+    <div class="accordion-item">
+        <h2 class="accordion-header">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#faqCollapseSeven"
+                    aria-expanded="false" aria-controls="faqCollapseSeven">
+                Как я могу связаться с поддержкой?
+            </button>
+        </h2>
+        <div id="faqCollapseSeven" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+            <div class="accordion-body">
+                Вы можете связаться с нашей службой поддержки, написав на электронную почту: nikitaakubickij@yandex.ru.
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
