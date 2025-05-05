@@ -1,12 +1,15 @@
-from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField, SelectField, DecimalField
-from wtforms.fields.choices import SelectMultipleField
-from wtforms.fields.simple import TextAreaField
-from wtforms.validators import DataRequired, ValidationError, Email, EqualTo, Length
 import sqlalchemy as sa
+from flask import current_app
+from flask_login import current_user
+from flask_wtf import FlaskForm
+from flask_wtf.file import FileAllowed
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, SelectField
+from wtforms.fields.choices import SelectMultipleField
+from wtforms.fields.simple import TextAreaField, FileField
+from wtforms.validators import DataRequired, ValidationError, Email, EqualTo, Length
+
 from app import db
 from app.models import Teacher, Subject, EducationalInstitution, Grade, TypeOfWork
-from flask_login import current_user
 
 
 class LoginForm(FlaskForm):
@@ -73,6 +76,7 @@ class PageAddForm(FlaskForm):
     grade = SelectField('Класс/курс', validators=[DataRequired()], choices=[])
     type_of_work = SelectField('Тип работы', validators=[DataRequired()], choices=[])
     subject = SelectField('Предмет', validators=[DataRequired()], choices=[])
+    file = FileField('Файл', validators=[DataRequired()])
     submit = SubmitField('Подтвердить')
 
     def __init__(self, *args, **kwargs):

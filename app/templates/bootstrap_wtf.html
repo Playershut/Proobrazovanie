@@ -16,8 +16,17 @@
 {{ field.label(class='form-label') }}
 {{ field(class='form-select mb-3') }}
 {%- elif field.type == 'SelectMultipleField' %}
-{{ field.label(class='form-label') }}
-{{ field(class='form-select mb-3') }}
+<div class="custom-select-multiple mb-3">
+    {{ field.label(class='form-label') }}
+    <div class="select-container">
+        <div class="selected-options-container">
+            <span class="selected-options-text"></span>
+            <div class="select-arrow"></div>
+        </div>
+        {{ field(class='form-select custom-select-list', multiple=true) }}
+        <ul class="select-options"></ul>
+    </div>
+</div>
 {%- elif field.type == 'TextAreaField' %}
 <div class="mb-3">
     {{ field.label(class='form-label') }}
@@ -47,12 +56,13 @@
 {%- endif %}
 {% endmacro %}
 
-{% macro quick_form(form, action="", method="post", id="", novalidate=False) %}
+{% macro quick_form(form, action="", method="post", id="", novalidate=False, enctype="") %}
 <form
         {%- if action !=None %} action="{{ action }}" {% endif -%}
         {%- if method %} method="{{ method }}" {% endif %}
         {%- if id %} id="{{ id }}" {% endif -%}
-        {%- if novalidate %} novalidate{% endif -%}>
+        {%- if novalidate %} novalidate{% endif -%}
+        {%- if enctype -%} enctype="{{ enctype }}" {%- endif -%}>
     {{ form.hidden_tag() }}
     {%- for field, errors in form.errors.items() %}
     {%- if form[field].widget.input_type == 'hidden' %}

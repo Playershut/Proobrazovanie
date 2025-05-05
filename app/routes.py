@@ -1,15 +1,26 @@
-from flask import render_template, flash, redirect, url_for, request
-from flask_login import current_user, login_user, logout_user, login_required
-import sqlalchemy as sa
+import os
+import uuid
 from urllib.parse import urlsplit
 
+import sqlalchemy as sa
+from flask import render_template, flash, redirect, url_for, request, current_app, abort, send_from_directory
+from flask_login import current_user, login_user, logout_user, login_required
 from sqlalchemy import or_, func
 
 from app import app, db
 from app.email import send_password_reset_email
-from app.models import Teacher, Subject, Page, Review
 from app.forms import LoginForm, RegistrationForm, EditProfileForm, PageAddForm, ReviewAddForm, EditPageForm, \
     ResetPasswordRequestForm, ResetPasswordForm, SearchForm
+from app.models import Teacher, Subject, Page, Review
+
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in current_app.config['ALLOWED_EXTENSIONS']
+
+
+def generate_unique_filename(filename):
+    _, ext = os.path.splitext(filename)
+    return uuid.uuid4().hex + ext
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -119,12 +130,12 @@ def explore():
         search = form.search.data
         grades = form.grades.data
         subjects = form.subjects.data
-        types_of_work = form.types_of_work.data
+        worktypes = form.types_of_work.data
         return redirect(url_for('explore',
                                 search=search,
                                 subjects=','.join(subjects),
                                 grades=','.join(grades),
-                                worktypes=','.join(types_of_work)))
+                                worktypes=','.join(worktypes)))
 
     search = request.args.get('search', None)
     subjects = request.args.get('subjects', '').split(',')
@@ -132,11 +143,21 @@ def explore():
     worktypes = request.args.get('worktypes', '').split(',')
     page = request.args.get('page', 1, type=int)
 
+    form.search.data = search
+    form.grades.data = grades
+    form.subjects.data = subjects
+    form.types_of_work.data = worktypes
+
     query = db.select(Page).order_by(Page.timestamp.desc())
     if search:
         search_term = f'%{search.lower()}%'
-        query = query.filter(or_(func.lower(Page.name).like(search_term),
-                                 func.lower(Page.description).like(search_term)))
+        query = query.filter(
+            or_(
+                func.lower(Page.name).like(search_term),
+                func.lower(Page.description).like(search_term),
+                func.lower(Teacher.full_name).like(search_term)
+            )
+        ).join(Page.author)
     if subjects and '' not in subjects:
         query = query.where(Page.subject.in_(subjects))
     if grades and '' not in grades:
@@ -161,12 +182,26 @@ def explore():
 def add_page():
     form = PageAddForm()
     if form.validate_on_submit():
+        filename = None
+        if form.file.data:
+            file = form.file.data
+            if file and allowed_file(file.filename):
+                original_filename = file.filename
+                filename = generate_unique_filename(original_filename)
+                filepath = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
+                file.save(filepath)
+            else:
+                flash('Недопустимый тип файла')
+                return render_template('add_page.html', title='Добавление статьи', form=form)
+
         post = Page(name=form.name.data,
                     description=form.description.data,
                     grade=form.grade.data,
                     type_of_work=form.type_of_work.data,
                     subject=form.subject.data,
-                    author=current_user)
+                    author=current_user,
+                    link=filename,
+                    original_filename=original_filename)
         db.session.add(post)
         db.session.commit()
         flash('Вы выложили статью!')
@@ -207,7 +242,9 @@ def page(id):
 @app.route('/edit_page/<id>', methods=['GET', 'POST'])
 @login_required
 def edit_page(id):
-    page = db.first_or_404(sa.select(Page).where(Page.id == id).where(Page.author == current_user))
+    page = db.first_or_404(sa.select(Page).where(Page.id == id))
+    if page.author != current_user:
+        abort(403)
     form = EditPageForm()
     if form.validate_on_submit():
         page.name = form.name.data
@@ -256,3 +293,24 @@ def reset_password(token):
         flash('Ваш пароль был сброшен.')
         return redirect(url_for('login'))
     return render_template('reset_password.html', form=form)
+
+
+@app.route('/delete_page/<id>')
+@login_required
+def delete_page(id):
+    page = db.first_or_404(sa.select(Page).where(Page.id == id))
+    if page.author != current_user:
+        abort(403)
+    os.remove(os.path.join(current_app.config['UPLOAD_FOLDER'], page.link))
+    db.session.delete(page)
+    db.session.commit()
+    flash('Статья удалена.')
+    return redirect(url_for('index'))
+
+
+@app.route('/download/<filename>')
+@login_required
+def download_file(filename):
+    page = db.first_or_404(sa.select(Page).where(Page.link == filename))
+    directory = current_app.config['UPLOAD_FOLDER']
+    return send_from_directory(directory, filename, as_attachment=True, download_name=page.original_filename)

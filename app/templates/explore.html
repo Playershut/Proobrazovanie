@@ -3,10 +3,36 @@
 
 {% block content %}
 <h1>Поиск</h1>
-{{ wtf.quick_form(form) }}
+<table class="table">
+    <tr valign="top">
+        <td>
+            <form action="" method="post">
+                {{ form.hidden_tag() }}
+                {{ wtf.form_field(form.search, False) }}
+                <div class="row">
+                    <div class="col-md-4">
+                        {{ wtf.form_field(form.grades, False) }}
+                    </div>
+                    <div class="col-md-4">
+                        {{ wtf.form_field(form.subjects, False) }}
+                    </div>
+                    <div class="col-md-4">
+                        {{ wtf.form_field(form.types_of_work, False) }}
+                    </div>
+                </div>
+                <a href="{{ url_for('explore') }}">Сбросить фильтры</a>
+                {{ wtf.form_field(form.submit, False) }}
+            </form>
+        </td>
+    </tr>
+</table>
+{% if posts %}
 {% for post in posts %}
 {% include '_post.html' %}
 {% endfor %}
+{% else %}
+<h1>Статьи, соответствующие текущим фильтрам, не найдены</h1>
+{% endif %}
 <nav aria-label="Навигация">
     <ul class="pagination">
         <li class="page-item{% if not prev_url %} disabled{% endif %}">

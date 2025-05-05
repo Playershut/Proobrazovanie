@@ -14,3 +14,5 @@ class Config:
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
     ADMINS = ['player15hut@gmail.com']
     POSTS_PER_PAGE = 10
+    UPLOAD_FOLDER = os.path.abspath('uploaded_files')
+    ALLOWED_EXTENSIONS = ['pdf', 'doc', 'docx', 'ppt', 'pptx', 'xls', 'xlsx', 'odt', 'ods', 'odp', 'txt', 'rtf']

@@ -13,29 +13,34 @@
 </head>
 <body>
 <header class="d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom header">
-    <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none">
-        <svg class="bi me-2" width="40" height="32" aria-hidden="true">
-            <use xlink:href="#logo"></use>
-        </svg>
-        <span class="fs-4" style="color: var(--color-primary-text)">ПроОбразование</span>
+    <a href="/"
+       class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none ms-5"
+       style="background-color: var(--color-body-bg); border-radius: 0.5em; padding: 0.1em;">
+        <img src="static\\icon.png" alt="ПроОбразование" class="logo me-1">
+        <span class="fs-4 me-1">
+            <span style="color: var(--color-accent)">Про</span><span
+                style="color: var(--color-primary-bg)">Образование</span>
+    </span>
     </a>
 
     <ul class="nav nav-pills test">
+        {% if current_user.is_anonymous %}
+        <li class="nav-item"><a href="{{ url_for('login') }}"
+                                class="nav-link {% if request.endpoint == 'login' %}active{% endif %}">Войти</a>
+        </li>
+        {% else %}
         <li class="nav-item"><a href="{{ url_for('index') }}"
                                 class="nav-link {% if request.endpoint == 'index' %}active{% endif %}">Главная</a>
         </li>
         <li class="nav-item"><a href="{{ url_for('explore') }}"
                                 class="nav-link {% if request.endpoint == 'explore' %}active{% endif %}">Поиск</a>
         </li>
-        {% if current_user.is_anonymous %}
-        <li class="nav-item"><a href="{{ url_for('login') }}"
-                                class="nav-link {% if request.endpoint == 'login' %}active{% endif %}">Войти</a></li>
-        {% else %}
         <li class="nav-item"><a href="{{ url_for('add_page') }}"
                                 class="nav-link {% if request.endpoint == 'add_page' %}active{% endif %}">Добавить
             статью</a></li>
         <li class="nav-item"><a href="{{ url_for('user', username=current_user.username) }}"
-                                class="nav-link {% if request.path == '/user/' + current_user.username %}active{% endif %}">Профиль</a></li>
+                                class="nav-link {% if request.path == '/user/' + current_user.username %}active{% endif %}">Профиль</a>
+        </li>
         <li class="nav-item"><a href="{{ url_for('logout') }}" class="nav-link">Выйти</a></li>
         {% endif %}
     </ul>
@@ -65,6 +70,93 @@
     </ul>
     <p class="text-center" style="color: var(--color-primary-text)">© 2025 Проект «ПроОбразование»</p>
 </footer>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
+        crossorigin="anonymous"></script>
+<script>
+    const customSelects = document.querySelectorAll('.custom-select-multiple');
+
+    customSelects.forEach(selectContainer => {
+        const select = selectContainer.querySelector('.custom-select-list');
+        const optionsList = selectContainer.querySelector('.select-options');
+        const selectedOptionsText = selectContainer.querySelector('.selected-options-text');
+        const selectContainerDiv = selectContainer.querySelector('.select-container');
+        const label = selectContainer.querySelector('.form-label');
+        let selectedOptions = [];
+        let isOpen = false;
+
+        // Функция для закрытия всех выпадающих списков
+        function closeAllSelects() {
+            customSelects.forEach(otherSelectContainer => {
+                const otherOptionsList = otherSelectContainer.querySelector('.select-options');
+                otherOptionsList.style.display = 'none';
+                otherSelectContainer.dataset.open = 'false'; // Используем dataset для отслеживания состояния
+            });
+        }
+
+        // Функция для обновления отображения выбранных опций
+        function updateSelectedOptions() {
+            selectedOptionsText.textContent = selectedOptions.length > 0 ? selectedOptions.join(', ') : label.textContent;
+        }
+
+        // Показать список опций
+        selectContainerDiv.addEventListener('click', (event) => {
+            event.stopPropagation();
+            closeAllSelects(); // Закрываем все перед открытием текущего
+            isOpen = !isOpen;
+            optionsList.style.display = isOpen ? 'block' : 'none';
+            selectContainer.dataset.open = isOpen ? 'true' : 'false'; // Store open state
+        });
+
+        // Создать и добавить опции
+        Array.from(select.options).forEach(option => {
+            const optionItem = document.createElement('li');
+            optionItem.textContent = option.textContent;
+            optionItem.dataset.value = option.value;
+
+            // Первоначальная проверка выбранных опций (при загрузке страницы)
+            if (option.selected) {
+                selectedOptions.push(option.textContent);
+                optionItem.classList.add('selected');
+            }
+            optionsList.appendChild(optionItem);
+        });
+
+        // Делегирование событий для ul
+        optionsList.addEventListener('click', (e) => {
+            if (e.target && e.target.nodeName === "LI") {
+                e.stopPropagation(); //  <--------------------  ВАЖНО! Останавливаем всплытие события
+                const clickedOption = e.target;
+                const optionValue = clickedOption.dataset.value;
+                const optionText = clickedOption.textContent;
+
+                const correspondingSelectOption = select.querySelector(`option[value="${optionValue}"]`);
+
+                if (selectedOptions.includes(optionText)) {
+                    selectedOptions = selectedOptions.filter(text => text !== optionText);
+                    correspondingSelectOption.selected = false;
+                    clickedOption.classList.remove('selected');
+                } else {
+                    selectedOptions.push(optionText);
+                    correspondingSelectOption.selected = true;
+                    clickedOption.classList.add('selected');
+                }
+                updateSelectedOptions();
+                select.dispatchEvent(new Event('change'));
+            }
+        });
+
+        // Скрыть список при клике вне элемента
+        document.addEventListener('click', (event) => {
+            if (!event.target.closest('.custom-select-multiple')) { // Check if click is outside any select
+                closeAllSelects();
+            }
+        });
+
+        updateSelectedOptions(); // Вызываем при инициализации
+    });
+</script>
 {{ moment.include_moment() }}
 {{ moment.lang('ru') }}
 </body>

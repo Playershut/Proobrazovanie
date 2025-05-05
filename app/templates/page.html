@@ -11,36 +11,25 @@
                 {{ page.author.full_name }}
             </a>
             <p>Оценка: {{ page.average_rating }}</p>
-            <p>Категории:</p>
-            <p>{{ page.tow.name }}, {{ page.sub.name }}, {{ page.grd.name }}</p>
+            <p class="mb-0">Категории:</p>
+            <a href="{{ url_for('explore', worktypes=page.tow.id) }}" class="badge badge-custom">{{ page.tow.name }}</a>
+            <a href="{{ url_for('explore', subjects=page.sub.id) }}" class="badge badge-custom">{{ page.sub.name }}</a>
+            <a href="{{ url_for('explore', grades=page.grd.id) }}" class="badge badge-custom">{{ page.grd.name }}</a>
             {% if page.author == current_user %}
             <p><a href="{{ url_for('edit_page', id=page.id) }}">Редактировать статью</a></p>
+            <a href="{{ url_for('delete_page', id=page.id) }}"
+               onclick="return confirm('Вы уверены, что хотите удалить эту статью?')">Удалить</a>
             {% endif %}
             {% if page.description %}<p>{{ page.description }}</p>{% endif %}
+            {% if page.link %}
+            <a href="{{ url_for('download_file', filename=page.link) }}" class="btn btn-primary">Скачать файл</a>
+            {% endif %}
         </td>
     </tr>
 </table>
 <hr>
 {% if rav %}
 {{ wtf.quick_form(form) }}
-<!--<form action="" method="post">-->
-<!--    {{ form.hidden_tag() }}-->
-<!--    <p>-->
-<!--        {{ form.rate.label }}<br>-->
-<!--        {{ form.rate }}<br>-->
-<!--        {% for error in form.rate.errors %}-->
-<!--        <span style="color: red;">[{{ error }}]</span>-->
-<!--        {% endfor %}-->
-<!--    </p>-->
-<!--    <p>-->
-<!--        {{ form.comment.label }}<br>-->
-<!--        {{ form.comment(cols=32, rows=8) }}<br>-->
-<!--        {% for error in form.comment.errors %}-->
-<!--        <span style="color: red;">[{{ error }}]</span>-->
-<!--        {% endfor %}-->
-<!--    </p>-->
-<!--    <p>{{ form.submit() }}</p>-->
-<!--</form>-->
 {% endif %}
 {% for review in reviews %}
 {% include '_review.html' %}
