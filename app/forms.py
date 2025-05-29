@@ -28,7 +28,8 @@ class RegistrationForm(FlaskForm):
     full_name = StringField('ФИО', validators=[DataRequired()])
     about = TextAreaField('О себе', validators=[Length(max=256)])
     subjects = SelectMultipleField('Преподаваемые предметы', validators=[DataRequired()], choices=[])
-    educational_institution = SelectField('Учебное заведение', validators=[DataRequired()], choices=[])
+    educational_institution = SelectField('Учебное заведение', validators=[DataRequired()], choices=[],
+                                          render_kw={'class': 'searchable-select'})
     submit = SubmitField('Зарегистрироваться')
 
     def __init__(self, *args, **kwargs):
@@ -51,14 +52,15 @@ class RegistrationForm(FlaskForm):
 class EditProfileForm(FlaskForm):
     username = StringField('Логин', validators=[DataRequired()])
     full_name = StringField('ФИО', validators=[DataRequired()])
+    avatar = FileField('Изменить аватар', validators=[FileAllowed(['jpg', 'png', 'jpeg', 'gif'])])
     about = TextAreaField('О себе', validators=[Length(max=256)])
     subjects = SelectMultipleField('Преподаваемые предметы', validators=[DataRequired()], choices=[])
-    educational_institution = SelectField('Учебное заведение', validators=[DataRequired()], choices=[])
+    educational_institution = SelectField('Учебное заведение', validators=[DataRequired()], choices=[],
+                                          render_kw={'class': 'searchable-select'})
     submit = SubmitField('Подтвердить')
 
     def __init__(self, original_username, *args, **kwargs):
         super().__init__(*args, **kwargs)
-
         self.original_username = original_username
         self.subjects.choices = [(s.id, s.name) for s in Subject.query.all()]
         self.educational_institution.choices = [(ei.id, ei.name) for ei in EducationalInstitution.query.all()]

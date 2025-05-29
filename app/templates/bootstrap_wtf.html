@@ -1,21 +1,34 @@
 {% macro form_field(field, autofocus) %}
+{% set combined_class_list = [] %}
+{% if field.render_kw and 'class' in field.render_kw %}
+    {% set _ = combined_class_list.append(field.render_kw['class']) %}
+{% endif %}
+
 {%- if field.type == 'BooleanField' %}
+    {% set _ = combined_class_list.append('form-check-input') %}
 <div class="form-check mb-3">
-    {{ field(class='form-check-input') }}
+    {{ field(class=combined_class_list|join(' ')) }}
     {{ field.label(class='form-check-label') }}
 </div>
 {%- elif field.type == 'RadioField' %}
 {{ field.label(class='form-label') }}
 {%- for item in field %}
+    {% set item_combined_class_list = [] %}
+    {% if item.render_kw and 'class' in item.render_kw %}
+        {% set _ = item_combined_class_list.append(item.render_kw['class']) %}
+    {% endif %}
+    {% set _ = item_combined_class_list.append('form-check-input') %}
 <div class="form-check{% if loop.last %} mb-3{% endif %}">
-    {{ item(class='form-check-input') }}
+    {{ item(class=item_combined_class_list|join(' ')) }}
     {{ item.label(class='form-check-label') }}
 </div>
 {%- endfor %}
 {%- elif field.type == 'SelectField' %}
+    {% set _ = combined_class_list.append('form-select mb-3') %}
 {{ field.label(class='form-label') }}
-{{ field(class='form-select mb-3') }}
+{{ field(class=combined_class_list|join(' ')) }}
 {%- elif field.type == 'SelectMultipleField' %}
+    {% set _ = combined_class_list.append('form-select custom-select-list') %}
 <div class="custom-select-multiple mb-3">
     {{ field.label(class='form-label') }}
     <div class="select-container">
@@ -23,31 +36,34 @@
             <span class="selected-options-text"></span>
             <div class="select-arrow"></div>
         </div>
-        {{ field(class='form-select custom-select-list', multiple=true) }}
+        {{ field(class=combined_class_list|join(' '), multiple=true) }}
         <ul class="select-options"></ul>
     </div>
 </div>
 {%- elif field.type == 'TextAreaField' %}
+    {% set _ = combined_class_list.append('form-control' + (' is-invalid' if field.errors else '')) %}
 <div class="mb-3">
     {{ field.label(class='form-label') }}
     {% if autofocus %}
-    {{ field(class='form-control' + (' is-invalid' if field.errors else ''), autofocus=True) }}
+    {{ field(class=combined_class_list|join(' '), autofocus=True) }}
     {% else %}
-    {{ field(class='form-control' + (' is-invalid' if field.errors else '')) }}
+    {{ field(class=combined_class_list|join(' ')) }}
     {% endif %}
     {%- for error in field.errors %}
     <div class="invalid-feedback">{{ error }}</div>
     {%- endfor %}
 </div>
 {%- elif field.type == 'SubmitField' %}
-{{ field(class='btn btn-primary mb-3') }}
+    {% set _ = combined_class_list.append('btn btn-primary mb-3') %}
+{{ field(class=combined_class_list|join(' ')) }}
 {%- else %}
+    {% set _ = combined_class_list.append('form-control' + (' is-invalid' if field.errors else '')) %}
 <div class="mb-3">
     {{ field.label(class='form-label') }}
     {% if autofocus %}
-    {{ field(class='form-control' + (' is-invalid' if field.errors else ''), autofocus=True) }}
+    {{ field(class=combined_class_list|join(' '), autofocus=True) }}
     {% else %}
-    {{ field(class='form-control' + (' is-invalid' if field.errors else '')) }}
+    {{ field(class=combined_class_list|join(' ')) }}
     {% endif %}
     {%- for error in field.errors %}
     <div class="invalid-feedback">{{ error }}</div>

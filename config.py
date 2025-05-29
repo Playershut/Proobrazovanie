@@ -15,4 +15,8 @@ class Config:
     ADMINS = ['player15hut@gmail.com']
     POSTS_PER_PAGE = 10
     UPLOAD_FOLDER = os.path.abspath('uploaded_files')
-    ALLOWED_EXTENSIONS = ['pdf', 'doc', 'docx', 'ppt', 'pptx', 'xls', 'xlsx', 'odt', 'ods', 'odp', 'txt', 'rtf']
+    ALLOWED_EXTENSIONS = ['pdf', 'doc', 'docx', 'ppt', 'pptx', 'xls', 'xlsx', 'odt', 'ods', 'odp', 'txt', 'rtf', 'jpg',
+                          'jpeg', 'png', 'gif', 'svg', 'mp3', 'wav', 'm4a', 'mp4', 'mov', 'avi', 'wmv', 'mkv', 'zip']
+    MAX_CONTENT_LENGTH = 512 * 1024 * 1024  # 1 GB
+    MAX_IMAGE_SIZE = (128, 128)
+    JPEG_QUALITY = 85

@@ -3,9 +3,11 @@ import uuid
 from urllib.parse import urlsplit
 
 import sqlalchemy as sa
+from PIL import Image
 from flask import render_template, flash, redirect, url_for, request, current_app, abort, send_from_directory
 from flask_login import current_user, login_user, logout_user, login_required
 from sqlalchemy import or_, func
+from werkzeug.utils import secure_filename
 
 from app import app, db
 from app.email import send_password_reset_email
@@ -105,6 +107,39 @@ def user(username):
 def edit_profile():
     form = EditProfileForm(current_user.username)
     if form.validate_on_submit():
+        if form.avatar.data:
+            image_file = form.avatar.data
+
+            allowed_extensions = {'png', 'jpg', 'jpeg', 'gif'}
+            file_extension = image_file.filename.rsplit('.', 1)[1].lower()
+            if file_extension not in allowed_extensions:
+                flash('Разрешены только изображения в форматах PNG, JPG, JPEG, GIF.')
+                return redirect(url_for('edit_profile'))
+
+            avatar_dir = os.path.join(current_app.config['UPLOAD_FOLDER'], 'avatars')
+            os.makedirs(avatar_dir, exist_ok=True)
+
+            base_filename = current_user.username
+
+            for ext in allowed_extensions:
+                old_avatar_path = os.path.join(avatar_dir, f"{base_filename}.{ext}")
+                if os.path.exists(old_avatar_path):
+                    os.remove(old_avatar_path)
+
+            try:
+                img = Image.open(image_file)
+            except Exception as e:
+                flash(f'Ошибка при обработке изображения: {e}')
+                return redirect(url_for('edit_profile'))
+
+            img.thumbnail(current_app.config['MAX_IMAGE_SIZE'], Image.LANCZOS)
+
+            final_avatar_filename = f"{base_filename}.png"
+            final_avatar_path = os.path.join(avatar_dir, final_avatar_filename)
+
+            img.save(final_avatar_path, optimize=True)
+
+            flash('Ваш аватар успешно обновлен!')
         current_user.username = form.username.data
         current_user.full_name = form.full_name.data
         current_user.about = form.about.data
@@ -329,3 +364,8 @@ def faq():
 @app.route('/about_us')
 def about_us():
     return render_template('about_us.html', title='О нас')
+
+
+@app.route('/avatars/<path:filename>')
+def uploaded_avatar(filename):
+    return send_from_directory(os.path.join(current_app.config['UPLOAD_FOLDER'], 'avatars'), filename)

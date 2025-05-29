@@ -1,9 +1,11 @@
+import os
 from datetime import datetime, timezone
 from time import time
 from typing import Optional
 import jwt
 import sqlalchemy as sa
 import sqlalchemy.orm as so
+from flask import current_app, url_for
 from sqlalchemy import ForeignKey
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
@@ -96,6 +98,17 @@ class Teacher(UserMixin, db.Model):
         return check_password_hash(self.password_hash, password)
 
     def avatar(self, size):
+        possible_extensions = ['.png', '.jpg', '.jpeg', '.gif']
+        base_filename = self.username
+        avatar_dir = os.path.join(current_app.config['UPLOAD_FOLDER'], 'avatars')
+
+        for ext in possible_extensions:
+            full_filename = base_filename + ext
+            avatar_path = os.path.join(avatar_dir, full_filename)
+
+            if os.path.exists(avatar_path):
+                return url_for('uploaded_avatar', filename=full_filename)
+
         digest = md5(self.email.lower().encode('utf-8')).hexdigest()
         return f'https://www.gravatar.com/avatar/{digest}?d=identicon&s={size}'
 

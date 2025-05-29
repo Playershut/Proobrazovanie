@@ -99,6 +99,10 @@ img.avatar {
     box-shadow: 0 0 5px var(--color-shadow);
 }
 
+.post .avatar {
+    width: 70px;
+}
+
 /* Кастомный badge */
 .badge-custom {
     background-color: var(--color-accent);
@@ -155,6 +159,14 @@ td {
 }
 
 /* Формы */
+.password-eye {
+  position: relative;
+  left: 0.56em;
+  top: 0.7em;
+  transform: translateY(-50%);
+  cursor: pointer;
+}
+
 .btn {
     display: inline-block;
     background: var(--color-accent);
