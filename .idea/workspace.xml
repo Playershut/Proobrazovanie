@@ -4,22 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="48423395-0e03-4b08-8e22-18f2f5453d74" name="Changes" comment="Added Privacy policy, FAQ and About us pages&#10;Upgraded header logo and links&#10;Added favicon">
-      <change afterPath="$PROJECT_DIR$/app/templates/413.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/errors.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/errors.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/forms.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/routes.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routes.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/static/styles.css" beforeDir="false" afterPath="$PROJECT_DIR$/app/static/styles.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/templates/_post.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/templates/_post.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/templates/_review.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/templates/_review.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/templates/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/templates/base.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/templates/bootstrap_wtf.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/templates/bootstrap_wtf.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/templates/edit_profile.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/templates/edit_profile.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/config.py" afterDir="false" />
-    </list>
+    <list default="true" id="48423395-0e03-4b08-8e22-18f2f5453d74" name="Changes" comment="Added password visibility&#10;Added search in some select fields &#10;Added avatar logic" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -249,7 +234,15 @@
       <option name="project" value="LOCAL" />
       <updated>1746477993509</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="Added password visibility&#10;Added search in some select fields &#10;Added avatar logic">
+      <option name="closed" value="true" />
+      <created>1748553949012</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1748553949012</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -275,6 +268,7 @@
     <MESSAGE value="Reduced styles.css&#10;Footer is now stuck to the bottom&#10;Added search logic&#10;Other small updates" />
     <MESSAGE value="Upgraded SelectMultipleField&#10;Upgraded search page (/explore)&#10;Added badges as tags on pages&#10;Added file upload and download&#10;Upgraded logo&#10;Changed header links visibility" />
     <MESSAGE value="Added Privacy policy, FAQ and About us pages&#10;Upgraded header logo and links&#10;Added favicon" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added Privacy policy, FAQ and About us pages&#10;Upgraded header logo and links&#10;Added favicon" />
+    <MESSAGE value="Added password visibility&#10;Added search in some select fields &#10;Added avatar logic" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added password visibility&#10;Added search in some select fields &#10;Added avatar logic" />
   </component>
 </project>
