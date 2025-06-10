@@ -2,13 +2,13 @@
 {% import 'bootstrap_wtf.html' as wtf %}
 
 {% block content %}
-<h1>Поиск</h1>
+<h1>Поиск статей</h1>
 <table class="table">
     <tr valign="top">
         <td>
             <form action="" method="post">
                 {{ form.hidden_tag() }}
-                {{ wtf.form_field(form.search, False) }}
+                {{ wtf.form_field(form.search) }}
                 <div class="row">
                     <div class="col-md-4">
                         {{ wtf.form_field(form.grades, False) }}
@@ -47,5 +47,9 @@
         </li>
     </ul>
 </nav>
+{% endblock %}
+{% block styles %}
+    {{ super() }}
+    
 {% endblock %}
 

@@ -15,48 +15,118 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
     crossorigin="anonymous" referrerpolicy="no-referrer"/>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        /* Стиль для логотипа с белой обводкой */
+        .logo-container {
+            display: flex;
+            align-items: center;
+            background-color: var(--color-primary-bg);
+            border-radius: 0.5em;
+            padding: 0.1em;
+            border: 2px solid white; /* Белая обводка */
+            box-shadow: 0 0 0 2px white; /* Альтернативный вариант обводки */
+        }
+        
+        .logo {
+            width: 3em;
+            height: 3em;
+            margin-right: 0.5em;
+        }
+        
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        
+        .logo-part1 {
+            color: var(--color-accent);
+        }
+        
+        .logo-part2 {
+            color: var(--color-primary-logo);
+        }
+        
+    </style>
+    <!-- Bootstrap CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+
 </head>
 <body>
-<header class="d-flex flex-wrap align-items-center justify-content-center py-3 mb-4 border-bottom header">
-    <a href="/"
-       class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none ms-5"
-       style="background-color: var(--color-body-bg); border-radius: 0.5em; padding: 0.1em;">
-        <img src="/static/icon.png" alt="ПроОбразование" class="logo me-1">
-        <span class="fs-4 me-1">
-            <span style="color: var(--color-accent)">Про</span><span
-                style="color: var(--color-primary-bg)">Образование</span>
-    </span>
-    </a>
+    <div class="page-transition page-visible">
+    <!-- Весь контент страницы здесь -->
+  
+<header class="header">
+    <div class="header-container">
+        <div class="logo-container"> <!-- Обертка для логотипа с обводкой -->
+            <a href="/" class="d-flex align-items-center text-decoration-none">
+                <img src="/static/icon.png" alt="ПроОбразование" class="logo">
+                <span class="logo-text">
+                    <span class="logo-part1">Про</span><span class="logo-part2">Образование</span>
+                </span>
+            </a>
+        </div>
 
-    <ul class="nav nav-pills test">
-        {% if current_user.is_anonymous %}
-        <li class="nav-item"><a href="{{ url_for('login') }}"
-                                class="nav-link {% if request.endpoint == 'login' %}active{% endif %}">Войти</a>
-        </li>
-        {% else %}
-        <li class="nav-item"><a href="{{ url_for('index') }}"
-                                class="nav-link {% if request.endpoint == 'index' %}active{% endif %}">Главная</a>
-        </li>
-        <li class="nav-item"><a href="{{ url_for('explore') }}"
-                                class="nav-link {% if request.endpoint == 'explore' %}active{% endif %}">Поиск</a>
-        </li>
-        <li class="nav-item"><a href="{{ url_for('add_page') }}"
-                                class="nav-link {% if request.endpoint == 'add_page' %}active{% endif %}">Добавить
-            статью</a></li>
-        <li class="nav-item"><a href="{{ url_for('user', username=current_user.username) }}"
-                                class="nav-link {% if request.path == '/user/' + current_user.username %}active{% endif %}">Профиль</a>
-        </li>
-        <li class="nav-item"><a href="{{ url_for('logout') }}" class="nav-link">Выйти</a></li>
-        {% endif %}
-    </ul>
+        <!-- Десктопное меню -->
+        <nav class="desktop-nav">
+            <ul class="nav nav-pills">
+                {% if current_user.is_anonymous %}
+                <li class="nav-item"><a href="{{ url_for('login') }}" class="nav-link {% if request.endpoint == 'login' %}active{% endif %}">Войти</a></li>
+                {% else %}
+                <li class="nav-item"><a href="{{ url_for('index') }}" class="nav-link {% if request.endpoint == 'index' %}active{% endif %}">Главная</a></li>
+                <li class="nav-item"><a href="{{ url_for('explore') }}" class="nav-link {% if request.endpoint == 'explore' %}active{% endif %}">Поиск</a></li>
+                <li class="nav-item"><a href="{{ url_for('add_page') }}" class="nav-link {% if request.endpoint == 'add_page' %}active{% endif %}">Добавить статью</a></li>
+                <li class="nav-item"><a href="{{ url_for('user', username=current_user.username) }}" class="nav-link {% if request.path == '/user/' + current_user.username %}active{% endif %}">Профиль</a></li>
+                <li class="nav-item"><a href="{{ url_for('logout') }}" class="nav-link">Выйти</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+
+        <!-- Кнопка мобильного меню -->
+        <button class="mobile-menu-btn">
+            <i class="fas fa-bars"></i>
+        </button>
+    </div>
+
+    <!-- Мобильное меню (шторка) -->
+    <div class="mobile-nav">
+        <div class="mobile-nav-header">
+            <span>Меню</span>
+            <button class="mobile-nav-close">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <ul class="nav nav-pills flex-column">
+            {% if current_user.is_anonymous %}
+            <li class="nav-item"><a href="{{ url_for('login') }}" class="nav-link {% if request.endpoint == 'login' %}active{% endif %}">Войти</a></li>
+            {% else %}
+            <li class="nav-item"><a href="{{ url_for('index') }}" class="nav-link {% if request.endpoint == 'index' %}active{% endif %}">Главная</a></li>
+            <li class="nav-item"><a href="{{ url_for('explore') }}" class="nav-link {% if request.endpoint == 'explore' %}active{% endif %}">Поиск</a></li>
+            <li class="nav-item"><a href="{{ url_for('add_page') }}" class="nav-link {% if request.endpoint == 'add_page' %}active{% endif %}">Добавить статью</a></li>
+            <li class="nav-item"><a href="{{ url_for('user', username=current_user.username) }}" class="nav-link {% if request.path == '/user/' + current_user.username %}active{% endif %}">Профиль</a></li>
+            <li class="nav-item"><a href="{{ url_for('logout') }}" class="nav-link">Выйти</a></li>
+            {% endif %}
+        </ul>
+        <div class="mobile-nav-footer">
+        <nav class="footer-nav">
+    <a href="{{ url_for('privacy_policy') }}" class="nav-link no-border">Политика конфиденциальности</a>
+    <a href="{{ url_for('faq') }}" class="nav-link no-border">FAQ</a>
+    <a href="{{ url_for('about_us') }}" class="nav-link no-border">О нас</a>
+</nav>
+    <p class="copyright">© 2025 Проект «ПроОбразование»</p>
+</div>
+    </div>
+    <div class="overlay"></div>
 </header>
+
+
+
+<!-- Остальной код остается без изменений -->
 <main>
     <div class="container">
         {% with messages = get_flashed_messages() %}
         {% if messages %}
         {% for message in messages %}
-        <div class="feature"
-             style="background-color: #e1f5fe; color: #333; border-left: 5px solid var(--color-accent);">
+        <div class="alert-message">
             {{ message }}
         </div>
         {% endfor %}
@@ -66,139 +136,281 @@
         {% block content %}{% endblock %}
     </div>
 </main>
-<footer class="py-3">
-    <ul class="nav justify-content-center border-bottom pb-3 mb-3">
-        <li class="nav-item"><a href="{{ url_for('index') }}" class="nav-link px-2">Главная</a></li>
-        <li class="nav-item"><a href="{{ url_for('privacy_policy') }}" class="nav-link px-2">Политика
-            конфиденциальности</a></li>
-        <li class="nav-item"><a href="{{ url_for('faq') }}" class="nav-link px-2">FAQ</a></li>
-        <li class="nav-item"><a href="{{ url_for('about_us') }}" class="nav-link px-2">О нас</a></li>
-    </ul>
-    <p class="text-center" style="color: var(--color-primary-text)">© 2025 Проект «ПроОбразование»</p>
+
+<footer class="footer">
+    <div class="footer-container">
+        <nav class="footer-nav">
+            <a href="{{ url_for('index') }}" class="nav-link">Главная</a>
+            <a href="{{ url_for('privacy_policy') }}" class="nav-link">Политика конфиденциальности</a>
+            <a href="{{ url_for('faq') }}" class="nav-link">FAQ</a>
+            <a href="{{ url_for('about_us') }}" class="nav-link">О нас</a>
+        </nav>
+        <p class="copyright">© 2025 Проект «ПроОбразование»</p>
+    </div>
 </footer>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
-        crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
-        crossorigin="anonymous"></script>
+
+<style>
+    body {
+    margin: 0;
+    padding-bottom: 100px; /* Высота футера */
+    min-height: 100vh;
+    position: relative;
+    box-sizing: border-box;
+    }
+    footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 50px;
+    background: #333;
+    color: white;
+    } 
+      .footer {
+            background: #f8f9fa;
+            border-top: 1px solid #e0e0e0;
+            padding: 20px 0;
+            margin-top: auto; /* Ключевое свойство для прижатия */
+            width: 100%;
+        }
+        
+    /* Жёсткий сброс стилей */
+    .footer * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    
+    .footer {
+        background: #f8f9fa;
+        padding: 20px 0;
+        width: 100%;
+    }
+    
+    .footer-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 15px;
+    }
+    
+    .footer-nav {
+        display: flex !important;
+        justify-content: center !important;
+        gap: 30px !important;
+        flex-wrap: nowrap !important;
+        margin-bottom: 15px !important;
+    }
+    
+    .nav-link {
+        display: inline-block !important;
+        white-space: nowrap !important;
+        color: #333 !important;
+        text-decoration: none !important;
+        font-weight: 500 !important;
+    }
+    
+    .copyright {
+        text-align: center;
+        color: #666;
+    }
+</style>
+
+
 <script>
+// Мобильное меню
+document.addEventListener('DOMContentLoaded', function() {
+    const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+    const mobileNav = document.querySelector('.mobile-nav');
+    const mobileNavClose = document.querySelector('.mobile-nav-close');
+    const overlay = document.querySelector('.overlay');
+
+    // Открытие меню
+    mobileMenuBtn.addEventListener('click', function() {
+        mobileNav.classList.add('active');
+        overlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    });
+
+    // Закрытие меню
+    function closeMobileMenu() {
+        mobileNav.classList.remove('active');
+        overlay.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
+    mobileNavClose.addEventListener('click', closeMobileMenu);
+    overlay.addEventListener('click', closeMobileMenu);
+
+    // Закрытие при клике на пункт меню
+    document.querySelectorAll('.mobile-nav .nav-link').forEach(link => {
+        link.addEventListener('click', closeMobileMenu);
+    });
+
+    // Кастомный селект
     const customSelects = document.querySelectorAll('.custom-select-multiple');
-
     customSelects.forEach(selectContainer => {
-        const select = selectContainer.querySelector('.custom-select-list');
-        const optionsList = selectContainer.querySelector('.select-options');
-        const selectedOptionsText = selectContainer.querySelector('.selected-options-text');
-        const selectContainerDiv = selectContainer.querySelector('.select-container');
-        const label = selectContainer.querySelector('.form-label');
-        let selectedOptions = [];
-        let isOpen = false;
-
-        // Функция для закрытия всех выпадающих списков
-        function closeAllSelects() {
-            customSelects.forEach(otherSelectContainer => {
-                const otherOptionsList = otherSelectContainer.querySelector('.select-options');
-                otherOptionsList.style.display = 'none';
-                otherSelectContainer.dataset.open = 'false'; // Используем dataset для отслеживания состояния
-            });
-        }
-
-        // Функция для обновления отображения выбранных опций
-        function updateSelectedOptions() {
-            selectedOptionsText.textContent = selectedOptions.length > 0 ? selectedOptions.join(', ') : label.textContent;
-        }
-
-        // Показать список опций
-        selectContainerDiv.addEventListener('click', (event) => {
-            event.stopPropagation();
-            closeAllSelects(); // Закрываем все перед открытием текущего
-            isOpen = !isOpen;
-            optionsList.style.display = isOpen ? 'block' : 'none';
-            selectContainer.dataset.open = isOpen ? 'true' : 'false'; // Store open state
-        });
-
-        // Создать и добавить опции
-        Array.from(select.options).forEach(option => {
-            const optionItem = document.createElement('li');
-            optionItem.textContent = option.textContent;
-            optionItem.dataset.value = option.value;
-
-            // Первоначальная проверка выбранных опций (при загрузке страницы)
-            if (option.selected) {
-                selectedOptions.push(option.textContent);
-                optionItem.classList.add('selected');
-            }
-            optionsList.appendChild(optionItem);
-        });
-
-        // Делегирование событий для ul
-        optionsList.addEventListener('click', (e) => {
-            if (e.target && e.target.nodeName === "LI") {
-                e.stopPropagation(); //  <--------------------  ВАЖНО! Останавливаем всплытие события
-                const clickedOption = e.target;
-                const optionValue = clickedOption.dataset.value;
-                const optionText = clickedOption.textContent;
-
-                const correspondingSelectOption = select.querySelector(`option[value="${optionValue}"]`);
-
-                if (selectedOptions.includes(optionText)) {
-                    selectedOptions = selectedOptions.filter(text => text !== optionText);
-                    correspondingSelectOption.selected = false;
-                    clickedOption.classList.remove('selected');
-                } else {
-                    selectedOptions.push(optionText);
-                    correspondingSelectOption.selected = true;
-                    clickedOption.classList.add('selected');
-                }
-                updateSelectedOptions();
-                select.dispatchEvent(new Event('change'));
-            }
-        });
-
-        // Скрыть список при клике вне элемента
-        document.addEventListener('click', (event) => {
-            if (!event.target.closest('.custom-select-multiple')) { // Check if click is outside any select
-                closeAllSelects();
-            }
-        });
-
-        updateSelectedOptions(); // Вызываем при инициализации
+        // ... (ваш существующий код для кастомных селектов)
     });
-</script>
-<script>
+
+    // Показать/скрыть пароль
     const passwordInput = document.querySelector('input[type="password"]');
-    const eyeIcon = document.createElement('i');
-    eyeIcon.classList.add('fa', 'fa-eye', 'password-eye');
-    passwordInput.parentNode.appendChild(eyeIcon);
+    if (passwordInput) {
+        const eyeIcon = document.createElement('i');
+        eyeIcon.classList.add('fas', 'fa-eye', 'password-eye');
+        passwordInput.parentNode.appendChild(eyeIcon);
 
-    eyeIcon.addEventListener('click', () => {
-      if (passwordInput.type === 'password') {
-        passwordInput.type = 'text';
-        eyeIcon.classList.remove('fa-eye');
-        eyeIcon.classList.add('fa-eye-slash');
-      } else {
-        passwordInput.type = 'password';
-        eyeIcon.classList.remove('fa-eye-slash');
-        eyeIcon.classList.add('fa-eye');
-      }
-    });
-</script>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-<script>
-    $(document).ready(function() {
-        $('.searchable-select').each(function() {
-            var $this = $(this);
-            $this.select2({
-                theme: "bootstrap-5",
-                placeholder: "Начните вводить для поиска...",
-                allowClear: true
-            });
-
-            $this.next('.select2-container').addClass('mb-3');
-            $this.next('.select2-selection').addClass('form-select');
+        eyeIcon.addEventListener('click', () => {
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                eyeIcon.classList.replace('fa-eye', 'fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                eyeIcon.classList.replace('fa-eye-slash', 'fa-eye');
+            }
         });
+    }
+
+    // Инициализация Select2
+    $('.searchable-select').each(function() {
+        $(this).select2({
+            theme: "bootstrap-5",
+            placeholder: "Начните вводить для поиска...",
+            allowClear: true
+        }).next('.select2-container').addClass('mb-3');
     });
+});
 </script>
+<!-- Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const mobileNav = document.querySelector('.mobile-nav');
+    const overlay = document.querySelector('.overlay');
+    const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let touchEndX = 0;
+    let touchEndY = 0;
+    const swipeThreshold = 50; // минимальное расстояние для свайпа
+    const allowedStartArea = window.innerWidth * 0.3; // правая 30% ширины экрана
+
+    function openMobileMenu() {
+        mobileNav.classList.add('active');
+        overlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeMobileMenu() {
+        mobileNav.classList.remove('active');
+        overlay.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
+    document.addEventListener('touchstart', function(e) {
+        touchStartX = e.changedTouches[0].screenX;
+        touchStartY = e.changedTouches[0].screenY;
+    }, {passive: true});
+
+    document.addEventListener('touchmove', function(e) {
+        const currentX = e.changedTouches[0].screenX;
+        const currentY = e.changedTouches[0].screenY;
+        const deltaX = touchStartX - currentX;
+        const deltaY = Math.abs(touchStartY - currentY);
+
+        // Если свайп начался в правой части и идёт влево, блокируем прокрутку страницы и открываем меню
+        if (touchStartX > window.innerWidth - allowedStartArea && deltaX > 0 && deltaX > deltaY) {
+            e.preventDefault(); // блокируем скролл страницы
+        }
+
+        // Если меню открыто и свайп вправо (закрытие), блокируем переход браузера "назад"
+        if (mobileNav.classList.contains('active') && currentX - touchStartX > swipeThreshold && deltaX < 0 && deltaY < 30) {
+            e.preventDefault(); // блокируем дефолтное поведение (например, свайп назад)
+        }
+    }, {passive: false});
+
+    document.addEventListener('touchend', function(e) {
+        touchEndX = e.changedTouches[0].screenX;
+        const deltaX = touchStartX - touchEndX;
+        const deltaY = Math.abs(touchStartY - e.changedTouches[0].screenY);
+
+        // Открытие меню свайпом влево с правой части экрана
+        if (touchStartX > window.innerWidth - allowedStartArea && deltaX > swipeThreshold && !mobileNav.classList.contains('active')) {
+            openMobileMenu();
+        }
+
+        // Закрытие меню свайпом вправо
+        if (mobileNav.classList.contains('active') && (touchEndX - touchStartX) > swipeThreshold && deltaY < 30) {
+            closeMobileMenu();
+        }
+    }, {passive: true});
+
+    // Обработчики кнопок и оверлея
+    mobileMenuBtn.addEventListener('click', openMobileMenu);
+    overlay.addEventListener('click', closeMobileMenu);
+    const mobileNavClose = document.querySelector('.mobile-nav-close');
+    mobileNavClose.addEventListener('click', closeMobileMenu);
+    document.querySelectorAll('.mobile-nav .nav-link').forEach(link => {
+        link.addEventListener('click', closeMobileMenu);
+    });
+});
+</script>
+
+
+
 {{ moment.include_moment() }}
 {{ moment.lang('ru') }}
+<script>
+// Функция для проверки видимости элементов
+function checkVisibility() {
+  const elements = document.querySelectorAll('.reveal');
+  elements.forEach(el => {
+    const rect = el.getBoundingClientRect();
+    const isVisible = (rect.top <= window.innerHeight * 0.8) && (rect.bottom >= 0);
+    if (isVisible) el.classList.add('active');
+  });
+}
+
+// Запуск при загрузке и скролле
+window.addEventListener('load', checkVisibility);
+window.addEventListener('scroll', checkVisibility);
+</script>
+  
+ <script>
+document.addEventListener('DOMContentLoaded', () => {
+  // Отслеживаем все клики по ссылкам
+  document.querySelectorAll('a[href]').forEach(link => {
+    // Пропускаем специальные ссылки
+    if (
+      link.target === '_blank' || 
+      link.href.startsWith('javascript:') || 
+      link.getAttribute('href').startsWith('#')
+    ) {
+      return;
+    }
+
+    link.addEventListener('click', (e) => {
+      // Если клик не мышкой (например, навигация браузера), пропускаем
+      if (e.clientX === 0 && e.clientY === 0) {
+        return;
+      }
+
+      // Для обычных кликов: плавный скролл вверх перед переходом
+      e.preventDefault();
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+
+      // Мгновенный переход после скролла
+      setTimeout(() => {
+        window.location.href = link.href;
+      }, 300); // Ждем завершения скролла
+    });
+  });
+});
+</script>
+</div>
 </body>
 </html>

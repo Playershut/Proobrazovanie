@@ -9,7 +9,7 @@ from wtforms.fields.simple import TextAreaField, FileField
 from wtforms.validators import DataRequired, ValidationError, Email, EqualTo, Length
 
 from app import db
-from app.models import Teacher, Subject, EducationalInstitution, Grade, TypeOfWork
+from app.models import Teacher, Subject, EducationalInstitution, Grade, TypeOfWork, Settlement
 
 
 class LoginForm(FlaskForm):
@@ -28,6 +28,8 @@ class RegistrationForm(FlaskForm):
     full_name = StringField('ФИО', validators=[DataRequired()])
     about = TextAreaField('О себе', validators=[Length(max=256)])
     subjects = SelectMultipleField('Преподаваемые предметы', validators=[DataRequired()], choices=[])
+    settlement = SelectField('Населённый пункт', validators=[DataRequired()], choices=[],
+                             render_kw={'class': 'searchable-select'})
     educational_institution = SelectField('Учебное заведение', validators=[DataRequired()], choices=[],
                                           render_kw={'class': 'searchable-select'})
     submit = SubmitField('Зарегистрироваться')
@@ -36,6 +38,7 @@ class RegistrationForm(FlaskForm):
         super(RegistrationForm, self).__init__(*args, **kwargs)
 
         self.subjects.choices = [(sub.id, sub.name) for sub in Subject.query.all()]
+        self.settlement.choices = [(s.id, s.name) for s in Settlement.query.all()]
         self.educational_institution.choices = [(ei.id, ei.name) for ei in EducationalInstitution.query.all()]
 
     def validate_username(self, username):
@@ -106,6 +109,7 @@ class EditPageForm(FlaskForm):
     grade = SelectField('Класс/курс', validators=[DataRequired()], choices=[])
     type_of_work = SelectField('Тип работы', validators=[DataRequired()], choices=[])
     subject = SelectField('Предмет', validators=[DataRequired()], choices=[])
+    file = FileField('Файл', validators=[DataRequired()])
     submit = SubmitField('Подтвердить')
 
     def __init__(self, *args, **kwargs):
@@ -126,6 +130,9 @@ class ResetPasswordForm(FlaskForm):
     password2 = PasswordField(
         'Повтор пароля', validators=[DataRequired(), EqualTo('password')])
     submit = SubmitField('Запросить сброс пароля')
+
+class EmptyForm(FlaskForm):
+    submit = SubmitField('Отправить')
 
 
 class SearchForm(FlaskForm):

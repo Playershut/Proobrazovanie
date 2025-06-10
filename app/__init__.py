@@ -8,6 +8,7 @@ from flask_moment import Moment
 import logging
 from logging.handlers import SMTPHandler, RotatingFileHandler
 import os
+import sys
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -38,9 +39,15 @@ if not app.debug:
         mail_handler.setLevel(logging.ERROR)
         app.logger.addHandler(mail_handler)
 
-    if not os.path.exists('logs'):
-        os.mkdir('logs')
-    file_handler = RotatingFileHandler('logs/microblog.log', maxBytes=10240,
+    log_dir = os.path.join(app.root_path, 'logs')
+    if not os.path.exists(log_dir):
+        try:
+            os.makedirs(log_dir)
+        except OSError as e:
+            print(f"Error creating log directory {log_dir}: {e}", file=sys.stderr)
+            pass
+
+    file_handler = RotatingFileHandler(os.path.join(log_dir, 'microblog.log'), maxBytes=10240,
                                        backupCount=10)
     file_handler.setFormatter(logging.Formatter(
         '%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]'))
@@ -51,6 +58,10 @@ if not app.debug:
     app.logger.info('Microblog startup')
 
 if not os.path.exists(app.config['UPLOAD_FOLDER']):
-    os.makedirs(app.config['UPLOAD_FOLDER'])
+    try:
+        os.makedirs(app.config['UPLOAD_FOLDER'])
+    except OSError as e:
+        print(f"Error creating upload folder {app.config['UPLOAD_FOLDER']}: {e}", file=sys.stderr)
+        pass
 
 from app import routes, models, errors

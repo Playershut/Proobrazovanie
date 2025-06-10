@@ -12,7 +12,8 @@ from werkzeug.utils import secure_filename
 from app import app, db
 from app.email import send_password_reset_email
 from app.forms import LoginForm, RegistrationForm, EditProfileForm, PageAddForm, ReviewAddForm, EditPageForm, \
-    ResetPasswordRequestForm, ResetPasswordForm, SearchForm
+    ResetPasswordRequestForm, ResetPasswordForm, SearchForm, EmptyForm
+
 from app.models import Teacher, Subject, Page, Review
 
 
@@ -94,12 +95,11 @@ def user(username):
     posts = db.paginate(query, page=page,
                         per_page=app.config['POSTS_PER_PAGE'],
                         error_out=False)
-    next_url = url_for('user', username=user.username, page=posts.next_num) \
-        if posts.has_next else None
-    prev_url = url_for('user', username=user.username, page=posts.prev_num) \
-        if posts.has_prev else None
+    next_url = url_for('user', username=user.username, page=posts.next_num) if posts.has_next else None
+    prev_url = url_for('user', username=user.username, page=posts.prev_num) if posts.has_prev else None
+    form = EmptyForm()  # 👈 добавлено
     return render_template('user.html', user=user, title='Профиль {}'.format(username), posts=posts.items,
-                           next_url=next_url, prev_url=prev_url)
+                           next_url=next_url, prev_url=prev_url, form=form, followed=user.followed.all())  # 👈 form добавлен
 
 
 @app.route('/edit_profile', methods=['GET', 'POST'])
@@ -116,6 +116,7 @@ def edit_profile():
                 flash('Разрешены только изображения в форматах PNG, JPG, JPEG, GIF.')
                 return redirect(url_for('edit_profile'))
 
+            from flask import current_app
             avatar_dir = os.path.join(current_app.config['UPLOAD_FOLDER'], 'avatars')
             os.makedirs(avatar_dir, exist_ok=True)
 
@@ -132,7 +133,25 @@ def edit_profile():
                 flash(f'Ошибка при обработке изображения: {e}')
                 return redirect(url_for('edit_profile'))
 
-            img.thumbnail(current_app.config['MAX_IMAGE_SIZE'], Image.LANCZOS)
+            target_size = min(current_app.config['MAX_IMAGE_SIZE'])
+
+            width, height = img.size
+
+            if width > height:
+                new_height = target_size
+                new_width = int(width * (target_size / height))
+            else:
+                new_width = target_size
+                new_height = int(height * (target_size / width))
+            
+            img = img.resize((new_width, new_height), Image.LANCZOS)
+
+            left = (new_width - target_size) / 2
+            top = (new_height - target_size) / 2
+            right = (new_width + target_size) / 2
+            bottom = (new_height + target_size) / 2
+
+            img = img.crop((left, top, right, bottom))
 
             final_avatar_filename = f"{base_filename}.png"
             final_avatar_path = os.path.join(avatar_dir, final_avatar_filename)
@@ -155,6 +174,41 @@ def edit_profile():
         form.educational_institution.data = str(current_user.educational_institution)
         form.subjects.data = [str(s.id) for s in current_user.subjects]
     return render_template('edit_profile.html', title='Редактирование профиля', form=form)
+
+@app.route('/follow/<username>', methods=['POST'])
+@login_required
+def follow(username):
+    form = EmptyForm()
+    if form.validate_on_submit():
+        user = db.session.scalar(sa.select(Teacher).where(Teacher.username == username))
+        if user is None:
+            flash('Пользователь не найден.')
+            return redirect(url_for('index'))
+        if user == current_user:
+            flash('Вы не можете подписаться на самого себя.')
+            return redirect(url_for('user', username=username))
+        current_user.follow(user)
+        db.session.commit()
+        flash(f'Вы подписались на {user.full_name}.')
+    return redirect(url_for('user', username=username))
+
+
+@app.route('/unfollow/<username>', methods=['POST'])
+@login_required
+def unfollow(username):
+    form = EmptyForm()
+    if form.validate_on_submit():
+        user = db.session.scalar(sa.select(Teacher).where(Teacher.username == username))
+        if user is None:
+            flash('Пользователь не найден.')
+            return redirect(url_for('index'))
+        if user == current_user:
+            flash('Вы не можете отписаться от самого себя.')
+            return redirect(url_for('user', username=username))
+        current_user.unfollow(user)
+        db.session.commit()
+        flash(f'Вы отписались от {user.full_name}.')
+    return redirect(url_for('user', username=username))
 
 
 @app.route('/explore', methods=['GET', 'POST'])
@@ -282,6 +336,34 @@ def edit_page(id):
         abort(403)
     form = EditPageForm()
     if form.validate_on_submit():
+        if form.file.data:
+            uploaded_file = form.file.data
+            if uploaded_file and allowed_file(uploaded_file.filename):
+                new_filename = generate_unique_filename(uploaded_file.filename)
+                new_filepath = os.path.join(current_app.config['UPLOAD_FOLDER'], new_filename)
+
+                try:
+                    uploaded_file.save(new_filepath)
+
+                    if page.link:
+                        old_filepath = os.path.join(current_app.config['UPLOAD_FOLDER'], page.link)
+                        if os.path.exists(old_filepath):
+                            os.remove(old_filepath)
+                            flash(f'Старый файл "{page.original_filename}" удален.')
+                        else:
+                            flash(f'Предупреждение: старый файл "{page.original_filename}" не найден для удаления.')
+
+                    page.link = new_filename
+                    page.original_filename = uploaded_file.filename
+                    flash('Файл успешно обновлен.')
+
+                except Exception as e:
+                    flash(f'Ошибка при сохранении файла: {e}')
+                    return render_template('edit_page.html', title='Редактирование статьи', form=form)
+            else:
+                flash('Недопустимый тип файла для загрузки.')
+                return render_template('edit_page.html', title='Редактирование статьи', form=form)
+
         page.name = form.name.data
         page.description = form.description.data
         page.grade = form.grade.data

@@ -1,19 +1,183 @@
-<table class="table table-hover post">
-    <tr>
-        <td width="70px">
-            <a href="{{ url_for('user', username=post.author.username) }}">
-                <img class="avatar" src="{{ post.author.avatar(70) }}"/>
-            </a>
-        </td>
-        <td>
-            <a class="profile-link" href="{{ url_for('user', username=post.author.username) }}">
-                {{ post.author.full_name }}
-            </a>
-            <br>
-            <a class="page-link" href="{{ url_for('page', id=post.id) }}">
-                {{ post.name }}
-            </a>
-            <div class="date-footer">Выложил(а) {{ moment(post.timestamp).fromNow() }}</div>
-        </td>
-    </tr>
-</table>
+<div class="card mb-3 shadow-sm border-0 post-card" style="
+     background-color: var(--color-card-bg);
+     border-radius: 12px;
+     transition: all 0.3s cubic-bezier(0.5, 1, 0.5, 1.25);
+     overflow: hidden;
+     cursor: pointer;
+     position: relative;"
+     onclick="window.location.href='{{ url_for('page', id=post.id) }}'">
+  
+  <div class="card-body p-0">
+    <div class="d-flex p-2 p-md-3">
+      <!-- Аватар с отдельной ссылкой на профиль -->
+      <div class="flex-shrink-0 me-2 me-md-3 avatar-container" style="
+           width: 50px;
+           height: 50px;
+           transition: transform 0.3s ease;
+           z-index: 2;"
+           onclick="event.stopPropagation(); window.location.href='{{ url_for('user', username=post.author.username) }}'">
+        <img class="avatar img-fluid rounded-circle" 
+             src="{{ post.author.avatar(70) }}" 
+             style="
+               width: 100%;
+               height: 100%;
+               object-fit: cover;
+               border: 2px solid var(--color-accent);
+               transition: all 0.3s ease;
+               opacity: 0;
+               transform: scale(0.9);"
+             onload="this.style.opacity='1'; this.style.transform='scale(1)'">
+      </div>
+      
+      <div class="flex-grow-1 d-flex flex-column" style="min-width: 0;">
+        <!-- Имя пользователя с отдельной ссылкой -->
+        <a href="{{ url_for('user', username=post.author.username) }}" 
+           class="profile-link text-truncate mb-1" 
+           style="
+             color: var(--color-body-text);
+             font-weight: 500;
+             font-size: clamp(0.85rem, 3.5vw, 1rem);
+             transition: color 0.2s ease;
+             text-decoration: none;
+             display: inline-block;
+             max-width: 80%;"
+           onclick="event.stopPropagation()">
+          {{ post.author.full_name }}
+        </a>
+        
+        <!-- Название поста -->
+        <div class="page-title mb-1 mb-md-2" 
+             style="
+               margin-bottom: 20px; /* Отступ снизу */
+               color: var(--color-primary);
+               font-weight: 600;
+               font-size: clamp(0.9rem, 3.5vw, 1.1rem);
+               line-height: 1.3;
+               display: -webkit-box;
+               -webkit-line-clamp: 2;
+               -webkit-box-orient: vertical;
+               overflow: hidden;
+               text-overflow: ellipsis;
+               max-width: 70%;">
+          {{ post.name }}
+        </div>
+        
+        <!-- Дата -->
+        <div class="date-footer text-muted d-flex align-items-center mt-auto" 
+             style="
+             margin-top: 20px;
+               font-size: clamp(0.7rem, 3vw, 0.8rem);
+               opacity: 0.8;
+               transition: opacity 0.3s ease;">
+          <i class="fa-regular fa-clock me-1" style="transition: transform 0.3s ease;"></i>
+          {{ moment(post.timestamp).fromNow() }}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  /* Анимации при наведении */
+  .post-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+    background-color: var(--color-card-hover) !important;
+  }
+  
+  .post-card:hover .avatar-container {
+    transform: translateY(-2px);
+  }
+  
+  .post-card:hover .avatar {
+    border-color: var(--color-primary);
+  }
+  
+  .post-card:hover .profile-link {
+    color: var(--color-primary);
+  }
+  
+  .post-card:hover .date-footer {
+    opacity: 1;
+  }
+  
+  .post-card:hover .date-footer i {
+    transform: rotate(-10deg);
+  }
+  
+  /* Эффект нажатия */
+  .post-card:active {
+    transform: translateY(1px) !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
+    transition: all 0.1s ease !important;
+  }
+  
+  /* Кастомные курсоры */
+  .profile-link, .avatar-container {
+    cursor: pointer;
+  }
+  
+  /* Адаптация для мобильных */
+  @media (max-width: 768px) {
+    .post-card {
+      border-radius: 10px !important;
+      margin-bottom: 12px !important;
+    }
+    
+    .avatar-container {
+      width: 44px !important;
+      height: 44px !important;
+    }
+    
+    .page-title {
+      -webkit-line-clamp: 2 !important;
+      line-height: 1.25 !important;
+      margin-bottom: 8px !important;
+    }
+    
+    .date-footer {
+      font-size: 0.7rem !important;
+    }
+    
+    .profile-link {
+      max-width: 90% !important;
+    }
+  }
+  
+  /* Для очень маленьких экранов */
+  @media (max-width: 480px) {
+    .d-flex {
+      padding: 12px !important;
+    }
+    
+    .avatar-container {
+      width: 40px !important;
+      height: 40px !important;
+    }
+    
+    .page-title {
+      font-size: 0.9rem !important;
+      -webkit-line-clamp: 2 !important;
+    }
+  }
+  
+  /* Отключение hover-эффектов на тач-устройствах */
+  @media (hover: none) {
+    .post-card:hover {
+      transform: none !important;
+      box-shadow: none !important;
+      background-color: var(--color-card-bg) !important;
+    }
+    
+    .post-card:hover .avatar-container,
+    .post-card:hover .avatar,
+    .post-card:hover .profile-link,
+    .post-card:hover .date-footer,
+    .post-card:hover .date-footer i {
+      transform: none !important;
+      border-color: var(--color-accent) !important;
+      color: inherit !important;
+      opacity: 0.8 !important;
+    }
+  }
+</style>

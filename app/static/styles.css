@@ -1,11 +1,34 @@
 :root {
-    --color-primary-bg: #35424a;
-    --color-primary-text: #ffffff;
-    --color-accent: #e8491d;
-    --color-body-text: #333;
-    --color-body-bg: #f4f4f4;
-    --color-card-bg: #fff;
-    --color-shadow: rgba(0, 0, 0, 0.1);
+    --color-primary-bg: #ffffff;       /* Чёрный для фона шапки */
+    --color-primary-text: #0066ff;     /* Белый для текста */
+    --color-accent: #0084ff;           /* Ярко-синий для акцентов */
+    --color-body-text: #333333;        /* Тёмно-серый для основного текста */
+    --color-body-bg: #f3f9ffe8;          /* Голубовато-белый для фона страницы */
+    --color-card-bg: #ffffff;          /* Белый для карточек */
+    --color-shadow: rgba(0, 51, 102, 0.1); /* Тень с синим оттенком */
+    --color-primary-logo: #000000;
+}
+/* Базовые стили для анимаций */
+.reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.6s ease-out;
+}
+
+.reveal.active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Дополнительные варианты анимаций (по желанию) */
+.reveal-left {
+  transform: translateX(-20px);
+}
+.reveal-right {
+  transform: translateX(20px);
+}
+.reveal-scale {
+  transform: scale(0.95);
 }
 
 /* Общие стили */
@@ -22,13 +45,16 @@ body {
     background-color: var(--color-body-bg);
     display: flex;
     flex-direction: column;
-    min-height: 100vh; /* Обеспечиваем, чтобы body занимал всю высоту viewport */
+    min-height: 100vh;
 }
 
 .container {
     width: 80%;
+    max-width: 1200px;
+    margin: 0 auto;
     overflow: hidden;
-    flex: 1; /* Позволяет контейнеру расширяться, занимая доступное пространство */
+    flex: 1;
+    padding: 0 15px;
 }
 
 /* Шапка */
@@ -40,38 +66,67 @@ body {
 .header {
     background: var(--color-primary-bg);
     color: var(--color-primary-text);
-    padding: 20px 0;
+    padding: 15px 0;
     border-bottom: var(--color-accent) 3px solid !important;
+    position: relative;
+    overflow: hidden;
+}
+
+.header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 0 15px;
 }
 
 header h1 {
-    float: left;
+    margin: 0;
+    font-size: 1.5rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 70%;
 }
 
-header nav {
-    float: right;
-    margin-top: 10px;
+/* Навигация */
+.desktop-nav {
+    color: var(--color-card-bg);
+    display: flex;
+    align-items: center;
 }
 
-header ul {
+.desktop-nav ul {
+    color: var(--color-card-bg);
     list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
 }
 
-header li {
-    display: inline;
-    padding: 0 20px;
+.desktop-nav li {
+    padding: 0 15px;
+}
+.nav-link.active {
+    color: #fff !important;
 }
 
 .nav-link {
     color: var(--color-primary-text);
+    text-decoration: none;
+    transition: color 0.3s;
 }
 
-.nav-pills > li > a.active {
-    background-color: var(--color-accent) !important;
+.nav-pills .nav-link.active {
+    background-color: #0d6efd;
+    color: #fff !important;
+    padding-left: 0.7rem;
+    padding-right: 0.7rem;
+    border-radius: 0.65rem; /* скругление побольше, если нужно */
 }
 
 .nav-pills > li > a:hover {
-    color: var(--color-accent);
+    color: #00b4ff;
 }
 
 header a {
@@ -82,13 +137,202 @@ header a {
 
 header a.active,
 header a:hover {
-    color: var(--color-accent);
+    color: #ffffff;
+}
+
+/* Мобильное меню */
+.header .nav-link,
+.mobile-nav .nav-link {
+    border: 1px solid #0d6efd;
+    border-radius: 0.65rem;
+    padding: 0.375rem 0.75rem;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+/* Удаляем обводку у ссылок с классом no-border */
+.footer-nav {
+    border: none !important;
+    padding-left: 0;
+    padding-right: 0;
+    margin: 0; /* если нужно */
+}
+.mobile-nav-footer .nav-link.no-border {
+    border: none !important;
+    box-shadow: none !important;
+    background: none !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    margin: 0 !important;
+}
+/* Остальное без изменений */
+.header .nav-link:hover,
+.header .nav-link:focus,
+.mobile-nav .nav-link:hover,
+.mobile-nav .nav-link:focus {
+    background-color: #0d6efd;
+    color: white !important;
+    text-decoration: none;
+}
+
+.header .nav-link.active,
+.mobile-nav .nav-link.active {
+    background-color: #0d6efd;
+    color: white !important;
+}
+.mobile-nav ul.nav {
+  gap: 0.05rem;
+}
+.mobile-nav ul.nav > li {
+  margin-bottom: 0.05;
+}
+.mobile-nav .nav-link {
+  margin-bottom: 0.05rem; /* уменьшает отступ снизу у каждой ссылки */
+  padding-top: 0.4rem;
+  padding-bottom: 0.4rem;
+}
+
+.mobile-nav {
+    position: fixed;
+    top: 0;
+    right: -100%; /* прячем меню */
+    width: 80%;
+    max-width: 300px;
+    height: 100%;
+    background-color: white;
+    box-shadow: -2px 0 5px rgba(0,0,0,0.3);
+    z-index: 1050;
+    transition: right 0.3s ease;
+    overflow-y: auto;
+    padding: 1em;
+}
+
+.mobile-nav.active {
+    right: 0; /* показываем меню */
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1040;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease;
+}
+
+.overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+.mobile-menu-btn {
+    display: none;
+    background: none;
+    border: none;
+    color: var(--color-primary-text);
+    font-size: 24px;
+    cursor: pointer;
+    padding: 5px 10px;
+    margin-left: 10px;
+}
+
+.mobile-nav {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 280px;
+    height: 100%;
+    background: var(--color-card-bg);
+    z-index: 1000;
+    transition: right 0.3s ease;
+    padding: 20px;
+    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.2);
+    overflow-y: auto;
+}
+
+.mobile-nav.active {
+    right: 0;
+}
+
+.mobile-nav-header span {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--color-primary-logo);
+}
+
+.mobile-nav ul {
+    list-style: none;
+    margin-top: 20px;
+}
+
+.mobile-nav li {
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.mobile-nav a {
+    color: var(--color-card-bg);
+    text-decoration: none;
+    font-size: 16px;
+    display: block;
+    padding: 5px 0;
+}
+
+.mobile-nav-close {
+    background: none;
+    border: none;
+    color: var(--color-card-bg);
+    font-size: 24px;
+    cursor: pointer;
+    padding: 0;
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    display: none;
+}
+
+.overlay.active {
+    display: block;
+}
+.mobile-footer {
+    padding: 20px 15px 10px;
+    border-top: 1px solid #ccc;
+    margin-top: auto;
+    text-align: center;
+}
+
+.mobile-footer .footer-nav {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 10px;
+}
+
+.mobile-footer .footer-nav .nav-link {
+    font-size: 0.8rem;
+    color: #888 !important;
+    text-decoration: none;
+}
+
+.footer-copy {
+    font-size: 0.7rem;
+    color: #aaa;
 }
 
 /* Основное содержимое */
 main {
     padding: 20px 0;
-    flex: 1; /* Позволяет main расширяться, занимая доступное пространство */
+    flex: 1;
 }
 
 /* Круглая аватарка */
@@ -127,7 +371,7 @@ table a {
 }
 
 table a:hover {
-    color: var(--color-primary-bg);
+    color: #003366; /* Тёмно-синий при наведении */
     text-decoration: underline;
 }
 
@@ -160,11 +404,11 @@ td {
 
 /* Формы */
 .password-eye {
-  position: relative;
-  left: 0.56em;
-  top: 0.7em;
-  transform: translateY(-50%);
-  cursor: pointer;
+    position: relative;
+    left: 0.56em;
+    top: 0.7em;
+    transform: translateY(-50%);
+    cursor: pointer;
 }
 
 .btn {
@@ -180,7 +424,7 @@ td {
 }
 
 .btn:hover {
-    background: var(--color-primary-bg);
+    background: #003366; /* Тёмно-синий при наведении */
 }
 
 .btn:active {
@@ -278,9 +522,129 @@ footer {
     text-align: center;
     border-top: 3px solid var(--color-accent);
     color: var(--color-body-text);
-    flex-shrink: 0; /* Предотвращает сжатие футера */
+    flex-shrink: 0;
+    padding: 20px 0;
 }
 
 footer a:hover {
-    color: var(--color-accent) !important;
+    color: #00b4ff !important; /* Голубой при наведении */
+}
+/* Скрыть блок футера на мобильном в основном футере */
+.footer .footer-nav,
+.footer .copyright {
+    display: block; /* По умолчанию видим на десктопе */
+}
+/* Начальное состояние - страница прозрачная */
+.page-transition {
+  opacity: 0;
+  transition: opacity 0.1s ease;
+}
+
+/* Когда страница загружена - плавно проявляется */
+.page-transition.page-visible {
+  opacity: 1;
+}
+
+/* Анимация ухода */
+.page-transition.page-fadeout {
+  opacity: 0;
+  transition: opacity 0.1s ease;
+}
+
+@media (max-width: 767.98px) {
+    /* Скрыть ссылки в основном футере на мобилке */
+    .footer .footer-nav,
+    .footer .copyright {
+        display: none;
+    }
+
+      /* Стили для футера внутри мобильной шторки */
+    .mobile-nav-footer {
+        padding: 10px 15px;
+        border-top: 1px solid #ddd;
+        font-size: 0.75rem;
+        color: #888;
+        text-align: center;
+        margin-top: auto;
+    }
+    
+    /* Сделать nav вертикальным списком */
+    .mobile-nav-footer .footer-nav {
+        display: flex;
+        flex-direction: column; /* В столбик */
+        gap: 8px;              /* Отступы между ссылками */
+        align-items: center;
+        margin-bottom: 5px;
+    }
+     .mobile-nav-footer .footer-nav .nav-link {
+        color: #888;
+        font-weight: 400;
+        text-decoration: none;
+    }
+    .mobile-nav-footer .footer-nav .nav-link:hover {
+        text-decoration: underline;
+    }
+}
+
+/* Адаптивные стили */
+@media (max-width: 767.98px) {
+    footer.footer {
+        display: none;
+    }
+}
+@media (max-width: 992px) {
+    .container {
+        width: 90%;
+    }
+    
+    .desktop-nav li {
+        padding: 0 10px;
+    }
+}
+@media (max-width: 992px) {
+    footer a:hover {
+        width: 90%;
+    }
+}
+
+@media (max-width: 768px) {
+    .desktop-nav {
+        display: none;
+    }
+    
+    .mobile-menu-btn {
+        display: block;
+    }
+    
+    header h1 {
+        font-size: 1.3rem;
+        max-width: 60%;
+    }
+}
+
+@media (max-width: 576px) {
+    .container {
+        width: 100%;
+        padding: 0 10px;
+    }
+    
+    .header {
+        padding: 10px 0;
+    }
+    
+    .header-container {
+        padding: 0 10px;
+    }
+    
+    header h1 {
+        font-size: 1.2rem;
+        max-width: 50%;
+    }
+    
+    .mobile-nav {
+        width: 250px;
+    }
+}
+.date-footer {
+    margin-top: 100px;
 }

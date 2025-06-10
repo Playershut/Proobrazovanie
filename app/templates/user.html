@@ -1,22 +1,193 @@
 {% extends "base.html" %}
 
 {% block content %}
-<table>
-    <tr valign="top">
-        <td><img class="avatar" src="{{ user.avatar(128) }}"></td>
-        <td>
-            <h1>Пользователь: {{ user.full_name }}</h1>
-            {% if user.about %}<p>{{ user.about }}</p>{% endif %}
-            {% if user == current_user %}
-            <p><a href="{{ url_for('edit_profile') }}">Редактировать профиль</a></p>
-            {% endif %}
-        </td>
-    </tr>
-</table>
+<div class="card shadow-sm border-0 mb-4" style="background-color: var(--color-card-bg); border-radius: 10px;">
+  <div class="card-body">
+    <div class="d-flex flex-column flex-md-row align-items-start">
+      <!-- Аватар -->
+      <div class="mb-3 mb-md-0 me-md-4 text-center text-md-start">
+        <img class="avatar" src="{{ user.avatar(128) }}" style="width: 128px; height: 128px; object-fit: cover; border-radius: 50%; border: 3px solid var(--color-accent);">
+      </div>
+      
+      <!-- Информация о пользователе -->
+      <div class="flex-grow-1 w-100" style="min-width: 0;">
+        <h1 class="h4 mb-2" style="color: var(--color-body-text); font-weight: bold;">{{ user.full_name }}</h1>
+        
+        {% if user.about %}
+          <p class="mb-3" style="color: var(--color-body-text);">{{ user.about }}</p>
+        {% endif %}
+        
+        <div class="d-flex flex-wrap align-items-center mb-3 follow-info" style="gap: 0.75rem;">
+          <strong class="me-2">
+            <a href="#" data-toggle="modal" data-target="#followersModal" style="color: var(--color-accent); text-decoration: none;">
+              Подписчики: {{ user.followers.count() }}
+            </a>
+          </strong>
+          <strong style="color: var(--color-body-text);">Подписки: {{ user.followed.count() }}</strong>
+        </div>
+        
+        {% if user != current_user %}
+          <form action="{{ url_for('follow' if not current_user.is_following(user) else 'unfollow', username=user.username) }}" method="post">
+            {{ form.hidden_tag() }}
+            <button type="submit" class="btn btn-sm" style="
+              background-color: {{ 'transparent' if current_user.is_following(user) else 'var(--color-accent)' }};
+              color: {{ 'var(--color-accent)' if current_user.is_following(user) else 'white' }};
+              border: 1px solid var(--color-accent);
+              border-radius: 6px;
+              font-weight: 500;
+              padding: 6px 16px;
+              min-width: 120px;
+              transition: all 0.3s ease;">
+              {{ 'Подписаться' if not current_user.is_following(user) else 'Отписаться' }}
+            </button>
+          </form>
+        {% else %}
+          <a href="{{ url_for('edit_profile') }}" class="btn btn-sm" style="
+            background-color: transparent;
+            color: var(--color-accent);
+            border: 1px solid var(--color-accent);
+            border-radius: 6px;
+            font-weight: 500;
+            padding: 6px 16px;
+            text-decoration: none;
+            transition: all 0.3s ease;">
+            Редактировать профиль
+          </a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Модальное окно со списком подписчиков -->
+<div class="modal fade" id="followersModal" tabindex="-1" role="dialog" aria-labelledby="followersModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content" style="background-color: var(--color-card-bg); border-radius: 12px; border: none;">
+            <div class="modal-header" style="border-bottom: 1px solid var(--color-accent);">
+                <h5 class="modal-title" id="followersModalLabel" style="color: var(--color-body-text); font-weight: bold;">
+                    <i class="fa-solid fa-users" style="color: var(--color-accent); margin-right: 8px;"></i>
+                    Подписчики: {{ user.followers.count() }}
+                </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Закрыть" style="color: var(--color-body-text);">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body p-0">
+                {% if user.followers %}
+                    <div class="list-group list-group-flush">
+                        {% for follower in user.followers %}
+                            <div class="list-group-item d-flex align-items-center justify-content-between py-3 px-3" style="background-color: var(--color-card-bg); border-color: rgba(0,0,0,0.05);">
+                                <div class="d-flex align-items-center" style="min-width: 0; flex-grow: 1;">
+                                    <img src="{{ follower.avatar(48) }}" alt="avatar" class="avatar me-3" style="width: 48px; height: 48px; object-fit: cover; border-radius: 50%; border: 2px solid var(--color-accent);">
+                                    <div style="min-width: 0;">
+                                        <a href="{{ url_for('user', username=follower.username) }}" class="profile-link d-block text-truncate" style="font-weight: 500; color: var(--color-body-text); text-decoration: none;">
+                                            {{ follower.full_name }}
+                                        </a>
+                                        <small class="text-muted d-block text-truncate" style="font-size: 0.8rem;">
+                                            @{{ follower.username }}
+                                        </small>
+                                    </div>
+                                </div>
+                                {% if follower != current_user %}
+                                    <form action="{{ url_for('follow' if not current_user.is_following(follower) else 'unfollow', username=follower.username) }}" method="post" class="ms-2">
+                                        {{ form.hidden_tag() }}
+                                        <button type="submit" class="btn btn-sm" style="
+                                            background-color: {{ 'transparent' if current_user.is_following(follower) else 'var(--color-accent)' }};
+                                            color: {{ 'var(--color-accent)' if current_user.is_following(follower) else 'white' }};
+                                            border: 1px solid var(--color-accent);
+                                            border-radius: 6px;
+                                            font-weight: 500;
+                                            padding: 4px 12px;
+                                            min-width: 100px;
+                                            white-space: nowrap;
+                                            transition: all 0.3s ease;">
+                                            {{ 'Подписаться' if not current_user.is_following(follower) else 'Отписаться' }}
+                                        </button>
+                                    </form>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="text-center py-4" style="color: var(--color-body-text);">
+                        <i class="fa-solid fa-user-slash" style="font-size: 2rem; color: var(--color-accent); margin-bottom: 1rem;"></i>
+                        <p>У пользователя пока нет подписчиков</p>
+                    </div>
+                {% endif %}
+            </div>
+            <div class="modal-footer" style="border-top: 1px solid var(--color-accent);">
+                <button type="button" class="btn" data-dismiss="modal" style="
+                    background-color: transparent;
+                    color: var(--color-accent);
+                    border: 1px solid var(--color-accent);
+                    border-radius: 6px;
+                    font-weight: 500;
+                    padding: 6px 16px;
+                    transition: all 0.3s ease;">
+                    Закрыть
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Блок подписок с адаптивным дизайном для мобильных устройств -->
+<div class="card my-3 shadow-sm border-0" style="background-color: var(--color-card-bg); border-radius: 10px;">
+  <div class="card-header" style="background-color: var(--color-primary-bg); border-bottom: 1px solid var(--color-accent); color: var(--color-body-text); font-weight: bold;">
+    <i class="fa-solid fa-user-plus" style="color: var(--color-accent); margin-right: 0.5em;"></i>
+    Пользователь подписан на:
+  </div>
+  <ul class="list-group list-group-flush">
+    {% for followed_user in followed %}
+      <li class="list-group-item d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center py-3" style="background-color: var(--color-card-bg); border-color: rgba(0,0,0,0.05);">
+        <div class="d-flex align-items-center mb-2 mb-md-0 w-100">
+          <img src="{{ followed_user.avatar(40) }}" alt="avatar" class="avatar me-3" style="width: 40px; height: 40px; object-fit: cover; border-radius: 50%; border: 2px solid var(--color-accent);">
+          <div class="d-flex flex-column flex-grow-1" style="min-width: 0;">
+            <a class="profile-link text-truncate" href="{{ url_for('user', username=followed_user.username) }}" style="max-width: 100%;">
+              {{ followed_user.full_name }}
+            </a>
+            <small class="text-muted" style="font-size: 0.75rem;">
+              {% if followed_user.subjects %}
+                <div class="text-truncate">Преподаёт: {{ followed_user.subjects[0].name }}{% if followed_user.subjects|length > 1 %} и др.{% endif %}</div>
+              {% endif %}
+              {% if followed_user.educational_institution_obj %}
+                <div class="text-truncate">Учреждение: {{ followed_user.educational_institution_obj.name }}</div>
+              {% endif %}
+            </small>
+          </div>
+        </div>
+        {% if followed_user != current_user %}
+          <form action="{{ url_for('unfollow' if current_user.is_following(followed_user) else 'follow', username=followed_user.username) }}" method="post" class="d-inline ms-md-2 mt-2 mt-md-0 align-self-md-center">
+            {{ form.hidden_tag() }}
+            <button type="submit" class="btn btn-sm" style="
+              background-color: transparent;
+              color: var(--color-accent);
+              border: 1px solid var(--color-accent);
+              border-radius: 6px;
+              font-weight: 500;
+              padding: 4px 12px;
+              min-width: 100px;
+              width: 100%;
+              transition: all 0.3s ease;">
+              {{ 'Отписаться' if current_user.is_following(followed_user) else 'Подписаться' }}
+            </button>
+          </form>
+        {% endif %}
+      </li>
+    {% else %}
+      <li class="list-group-item text-muted py-3" style="background-color: var(--color-card-bg);">
+        Пока ни на кого не подписан.
+      </li>
+    {% endfor %}
+  </ul>
+</div>
+
 <hr>
+
 {% for post in posts %}
-{% include '_post.html' %}
+    {% include '_post.html' %}
 {% endfor %}
+
 <nav aria-label="Навигация">
     <ul class="pagination">
         <li class="page-item{% if not prev_url %} disabled{% endif %}">

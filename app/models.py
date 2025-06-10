@@ -1,7 +1,7 @@
 import os
 from datetime import datetime, timezone
 from time import time
-from typing import Optional
+from typing import Optional, List # Добавлен List
 import jwt
 import sqlalchemy as sa
 import sqlalchemy.orm as so
@@ -18,6 +18,11 @@ from app import db, login, app
 def load_user(id):
     return db.session.get(Teacher, int(id))
 
+followers = sa.Table(
+    'followers', db.Model.metadata,
+    sa.Column('follower_id', sa.Integer, sa.ForeignKey('teachers.id')),
+    sa.Column('followed_id', sa.Integer, sa.ForeignKey('teachers.id'))
+)
 
 teacher_subject = sa.Table(
     'teacher_subject', db.Model.metadata,
@@ -32,9 +37,9 @@ class Subject(db.Model):
     id: so.Mapped[int] = so.mapped_column(primary_key=True)
     name: so.Mapped[str] = so.mapped_column(sa.String(128))
 
-    teachers: so.Mapped[list['Teacher']] = so.relationship('Teacher', secondary=teacher_subject,
+    teachers: so.Mapped[List['Teacher']] = so.relationship('Teacher', secondary=teacher_subject,
                                                            back_populates='subjects')
-    pages: so.Mapped[list['Page']] = so.relationship(back_populates='sub')
+    pages: so.Mapped[List['Page']] = so.relationship(back_populates='sub')
 
     def __repr__(self):
         return '<Subject {}>'.format(self.name)
@@ -45,7 +50,7 @@ class Region(db.Model):
     id: so.Mapped[int] = so.mapped_column(primary_key=True)
     name: so.Mapped[str] = so.mapped_column(sa.String(32), index=True, unique=True)
 
-    settlements: so.Mapped[list['Settlement']] = so.relationship(back_populates='region')
+    settlements: so.Mapped[List['Settlement']] = so.relationship(back_populates='region')
 
     def __repr__(self):
         return 'Region {}'.format(self.name)
@@ -83,10 +88,28 @@ class Teacher(UserMixin, db.Model):
     about: so.Mapped[Optional[str]] = so.mapped_column(sa.String(256))
     educational_institution: so.Mapped[int] = so.mapped_column(sa.ForeignKey(EducationalInstitution.id), index=True)
 
-    subjects: so.Mapped[list['Subject']] = so.relationship('Subject', secondary=teacher_subject,
-                                                           back_populates='teachers')
+    subjects: so.Mapped[List['Subject']] = so.relationship('Subject', secondary=teacher_subject, back_populates='teachers')
+    followed: so.Mapped[List['Teacher']] = so.relationship(
+        'Teacher',
+        secondary=followers,
+        primaryjoin=lambda: Teacher.id == followers.c.follower_id,
+        secondaryjoin=lambda: Teacher.id == followers.c.followed_id,
+        backref=so.backref('followers', lazy='dynamic'),
+        lazy='dynamic'
+    )
     pages: so.WriteOnlyMapped['Page'] = so.relationship(back_populates='author')
-    reviews: so.Mapped[list['Review']] = so.relationship(back_populates='author')
+    reviews: so.Mapped[List['Review']] = so.relationship(back_populates='author')
+
+    def follow(self, teacher):
+        if not self.is_following(teacher):
+            self.followed.append(teacher)
+
+    def unfollow(self, teacher):
+        if self.is_following(teacher):
+            self.followed.remove(teacher)
+
+    def is_following(self, teacher):
+        return self.followed.filter(followers.c.followed_id == teacher.id).count() > 0
 
     def __repr__(self):
         return '<Teacher {}>'.format(self.username)
@@ -120,11 +143,11 @@ class Teacher(UserMixin, db.Model):
     @staticmethod
     def verify_reset_password_token(token):
         try:
-            id = jwt.decode(token, app.config['SECRET_KEY'],
-                            algorithms=['HS256'])['reset_password']
+            id = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])['reset_password']
         except:
             return
         return db.session.get(Teacher, id)
+
 
 
 class TypeOfWork(db.Model):
@@ -132,7 +155,7 @@ class TypeOfWork(db.Model):
     id: so.Mapped[int] = so.mapped_column(primary_key=True)
     name: so.Mapped[str] = so.mapped_column(sa.String(64), index=True, unique=True)
 
-    pages: so.Mapped[list['Page']] = so.relationship(back_populates='tow')
+    pages: so.Mapped[List['Page']] = so.relationship(back_populates='tow')
 
 
 class Grade(db.Model):
@@ -140,7 +163,7 @@ class Grade(db.Model):
     id: so.Mapped[int] = so.mapped_column(primary_key=True)
     name: so.Mapped[str] = so.mapped_column(sa.String(8), index=True, unique=True)
 
-    pages: so.Mapped[list['Page']] = so.relationship(back_populates='grd')
+    pages: so.Mapped[List['Page']] = so.relationship(back_populates='grd')
 
 
 class Page(db.Model):
@@ -157,7 +180,7 @@ class Page(db.Model):
     type_of_work: so.Mapped[int] = so.mapped_column(sa.ForeignKey(TypeOfWork.id), index=True)
     subject: so.Mapped[int] = so.mapped_column(sa.ForeignKey(Subject.id), index=True)
 
-    reviews: so.Mapped[list['Review']] = so.relationship(back_populates='page')
+    reviews: so.Mapped[List['Review']] = so.relationship(back_populates='page')
     author: so.Mapped['Teacher'] = so.relationship(back_populates='pages')
     tow: so.Mapped['TypeOfWork'] = so.relationship(back_populates='pages')
     sub: so.Mapped['Subject'] = so.relationship(back_populates='pages')
