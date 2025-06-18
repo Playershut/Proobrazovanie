@@ -1,0 +1,206 @@
+{% extends "base.html" %}
+{% import 'bootstrap_wtf.html' as wtf %}
+
+{% block content %}
+<style>
+    :root {
+        --primary-color: #0d6efd; /* Основной цвет (сине-серый) */
+        --secondary-color: #f8f9fa; /* Фоновый цвет */
+        --accent-color: #5089c2fd; /* Акцентный цвет */
+        --text-color: #333; /* Цвет текста */
+        --light-text: #6c757d; /* Светлый текст */
+        --border-color: #ced4da; /* Цвет границ */
+        --shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Тень */
+        --transition: all 0.3s ease; /* Анимация */
+    }
+/* Стили для алертов (вкладок внизу) */
+    .alert-tab-container {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        display: flex;
+        justify-content: center;
+        z-index: 1000;
+    }
+
+    .alert-tab {
+        max-width: 450px;
+        width: 100%;
+        padding: 15px 20px;
+        border-radius: 10px 10px 0 0;
+        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+        margin: 0 auto;
+        transform: translateY(100%);
+        transition: transform 0.4s ease-out;
+        position: relative;
+    }
+
+    .alert-tab.show {
+        transform: translateY(0);
+    }
+
+    .alert-tab.success {
+        background-color: var(--success-color);
+        color: white;
+    }
+
+    .alert-tab.error {
+        background-color: var(--error-color);
+        color: white;
+    }
+
+    .alert-tab.info {
+        background-color: var(--info-color);
+        color: white;
+    }
+
+    .alert-tab:after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 50%;
+        width: 30px;
+        height: 4px;
+        background: rgba(255, 255, 255, 0.5);
+        border-radius: 2px;
+        transform: translateX(-50%);
+    }
+    .login-container {
+        max-width: 450px;
+        margin: 2rem auto;
+        padding: 2.5rem;
+        background-color:  var(--color-body-bg) !important;
+        border-radius: 10px;
+        box-shadow: var(--shadow);
+        transform: translateY(0);
+        transition: var(--transition);
+    }
+
+    .login-container:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+        color: var(--primary-color);
+        text-align: center;
+        margin-bottom: 1.5rem;
+        font-weight: 600;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-control {
+        border: 1px solid var(--border-color);
+        border-radius: 5px;
+        padding: 12px 15px;
+        transition: var(--transition);
+    }
+
+    .form-control:focus {
+        border-color: var(--accent-color);
+        box-shadow: 0 0 0 0.2rem rgba(92, 124, 156, 0.25);
+    }
+
+    .btn-primary {
+        background-color: var(--primary-color);
+        border: none;
+        padding: 12px;
+        border-radius: 5px;
+        font-weight: 500;
+        letter-spacing: 0.5px;
+        transition: var(--transition);
+        width: 100%;
+    }
+
+    .btn-primary:hover {
+        background-color: var(--accent-color);
+        transform: translateY(-2px);
+    }
+
+    .form-footer {
+        margin-top: 1.5rem;
+        text-align: center;
+        color: var(--color-primary-text);
+    }
+
+    .form-footer a {
+        color: var(--accent-color);
+        text-decoration: none;
+        transition: var(--transition);
+        font-weight: 500;
+    }
+
+    .form-footer a:hover {
+        color: var(--primary-color);
+        text-decoration: underline;
+    }
+
+    .checkbox label {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+    }
+
+    .checkbox input {
+        margin-right: 8px;
+    }
+
+    /* Анимация загрузки */
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .login-container {
+        animation: fadeIn 0.6s ease-out;
+    }
+
+    /* Мобильная версия */
+    @media (max-width: 576px) {
+        .login-container {
+            padding: 1.5rem;
+            margin: 1rem;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+        }
+
+        .btn-primary {
+            padding: 10px;
+        }
+    }
+
+    /* Эффект при нажатии */
+    .btn-primary:active {
+        transform: translateY(0);
+    }
+
+    /* Плавное появление элементов формы */
+    .form-group {
+        opacity: 0;
+        animation: fadeIn 0.5s ease-out forwards;
+    }
+
+    .form-group:nth-child(1) { animation-delay: 0.2s; }
+    .form-group:nth-child(2) { animation-delay: 0.3s; }
+    .form-group:nth-child(3) { animation-delay: 0.4s; }
+    .form-footer { animation: fadeIn 0.5s ease-out 0.5s forwards; }
+</style>
+
+<div class="login-container">
+    <h1>Вход</h1>
+    {{ wtf.quick_form(form) }}
+    <div class="form-footer">
+        <p>Новый пользователь? <a href="{{ url_for('register') }}">Нажмите, чтобы зарегистрироваться!</a></p>
+        <p>
+            Забыли пароль?
+            <a href="{{ url_for('reset_password_request') }}">Нажмите для восстановления</a>
+        </p>
+    </div>
+</div>
+{% endblock %}

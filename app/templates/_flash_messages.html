@@ -1,0 +1,615 @@
+<div id="notificationPopup" aria-hidden="true">
+  {% if notifications %}
+  {% for notif in notifications %}
+    <div class="flash-message-alert alert alert-info" role="alert" data-id="{{ notif.id }}">
+      <div class="notification-swipe-area">
+        <div class="notification-content">
+          <div class="notification-header">
+    <span class="notification-dot"></span>
+</div>
+          <div class="notification-author">{{ notif.author }}</div>
+          <div class="notification-message">{{ notif.message }}</div>
+          {% if notif.link %}
+            <div class="notification-footer">
+              <a href="{{ notif.link }}" class="notification-action">Перейти</a>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+      <button type="button" class="btn-close" aria-label="Закрыть уведомление">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M1 1L11 11M1 11L11 1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
+  {% endfor %}
+{% else %}
+  <div class="empty-notification">
+    <div class="empty-icon">📭</div>
+    <p>Уведомлений нет</p>
+  </div>
+{% endif %}
+</div>
+
+<style>
+/* Общие стили */
+.notification-dot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    background-color: #4a6cf7;
+    border-radius: 50%;
+    margin-right: 8px;
+    animation: pulse 1.5s infinite;
+    vertical-align: middle;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(0.95);
+        opacity: 0.7;
+    }
+    50% {
+        transform: scale(1.1);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(0.95);
+        opacity: 0.7;
+    }
+}
+
+.notification-header {
+    display: flex;
+    align-items: center;
+    color: #666;
+    font-size: 13px;
+    line-height: 1.3;
+}
+
+#notificationPopup {
+    position: fixed;
+    z-index: 9999 !important;
+    opacity: 0;
+    pointer-events: auto;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    background-color: #fff;
+    overflow-y: auto;
+    touch-action: pan-y;
+    will-change: transform, opacity;
+}
+
+/* Стили для ПК */
+@media (min-width: 768px) {
+    .notification-overlay {
+        display: none !important;
+    }
+    
+    body.notification-open {
+        overflow: auto !important;
+        position: static !important;
+        width: auto !important;
+        height: auto !important;
+    }
+    
+    #notificationPopup {
+        top: auto; /* Располагаем окно ниже верхнего края */
+        right: 20px; /* Отступ от правого края */
+        left: auto; /* Отменяем left для мобильной версии */
+        bottom: 15px; /* Отменяем bottom для мобильной версии */
+        width: 380px; /* Фиксированная ширина */
+        max-height: 70vh; /* Максимальная высота */
+        border-radius: 12px; /* Скругление углов */
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15); /* Тень */
+        transform: translateY(0); /* Сбрасываем transform для мобильной версии */
+        padding: 16px; /* Внутренние отступы */
+    }
+    
+    #notificationPopup.show {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    
+    .flash-message-alert {
+        margin-bottom: 15px;
+        padding-right: 40px;
+        position: relative;
+        transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        will-change: transform, opacity, height, margin, padding;
+    }
+}
+
+/* Стили для мобильных */
+/* Стили для мобильных устройств */
+@media (max-width: 767px) {
+    .flash-message-alert {
+        touch-action: pan-y;
+        user-select: none;
+        /* Добавляем иконку для наглядности */
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='rgba(0,0,0,0.2)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M15 18l-6-6 6-6'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: 95% center;
+        background-size: 16px;
+    }
+}
+@media (max-width: 767px) {
+    #notificationPopup {
+        top: auto;
+        bottom: 0;
+        right: 0;
+        left: 0;
+        width: 100%;
+        height: 60vh; /* Фиксированная высота */
+        max-height: 60vh; /* Было 40vh, теперь 60vh */
+        border-radius: 16px 16px 0 0;
+        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
+        transform: translateY(100%);
+        padding: 12px 16px;
+        /* Добавляем это свойство, чтобы контент не выходил за границы */
+        box-sizing: border-box;
+    }
+    
+    #notificationPopup.show {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    
+       .flash-message-alert {
+        margin-bottom: 12px;
+        border-radius: 10px;
+        background: #fff;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        padding: 12px 40px 12px 12px;
+        position: relative;
+        transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        will-change: transform, opacity, height, margin, padding;
+    }
+    .notification-swipe-area {
+        touch-action: pan-y !important;
+    }
+}
+
+/* Общие элементы */
+.notification-content {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.notification-header {
+    color: #666;
+    font-size: 13px;
+    line-height: 1.3;
+}
+
+.notification-author {
+    color: #333;
+    font-weight: 500;
+    margin: 2px 0;
+    line-height: 1.3;
+}
+
+.notification-message {
+    color: #333;
+    line-height: 1.4;
+    margin: 4px 0 6px;
+    word-break: break-word;
+}
+
+.notification-footer {
+    margin-top: 6px;
+}
+
+.notification-action {
+    color: #4a6cf7;
+    font-size: 13px;
+    font-weight: 500;
+    text-decoration: none;
+    display: inline-block;
+    transition: opacity 0.2s;
+}
+
+.notification-action:hover {
+    opacity: 0.8;
+    text-decoration: underline;
+}
+
+.btn-close {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    background: rgba(0,0,0,0.05);
+    border: none;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+    transition: background 0.2s;
+}
+
+.btn-close:hover {
+    background: rgba(0,0,0,0.1);
+}
+
+.empty-notification {
+    text-align: center;
+    padding: 20px;
+    color: #666;
+}
+
+.empty-icon {
+    font-size: 40px;
+    margin-bottom: 10px;
+    opacity: 0.6;
+}
+
+/* Анимации */
+.flash-message-alert.alert-enter {
+    opacity: 0;
+    transform: translateY(-10px);
+}
+
+.flash-message-alert.alert-enter-active {
+    opacity: 1;
+    transform: translateY(0);
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.flash-message-alert.alert-exit {
+    opacity: 1;
+    height: auto;
+    margin-bottom: 15px;
+    padding: 12px 40px 12px 12px;
+}
+
+.flash-message-alert.alert-exit-active {
+    opacity: 0;
+    height: 0 !important;
+    margin-bottom: 0 !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.swipe-out {
+    animation: swipeOut 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes swipeOut {
+    to { 
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const notificationPopup = document.getElementById('notificationPopup');
+    const notificationBtn = document.getElementById('notificationBtn');
+    
+    // Создаем overlay для фона
+    const overlay = document.createElement('div');
+    overlay.className = 'notification-overlay';
+    document.body.appendChild(overlay);
+    
+    // Стили для блокировки прокрутки и взаимодействия
+    const lockStyles = document.createElement('style');
+    lockStyles.innerHTML = `
+    body.notification-open {
+        overflow: hidden !important;
+        height: 100vh !important;
+    }
+    
+    .notification-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0,0,0,0.5);
+        z-index: 1001;
+        display: none;
+    }
+    
+    body.notification-open .notification-overlay {
+        display: block;
+    }
+    
+    #notificationPopup {
+        position: fixed;
+        z-index: 1002;
+        max-height: 90vh;
+        overflow-y: auto;
+        display: none;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 90%;
+        max-width: 500px;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    }
+    
+    #notificationPopup.show {
+        display: block;
+        
+    }
+    
+    .notification-swipe-area {
+        touch-action: pan-y !important;
+    }
+    
+    @media (min-width: 768px) {
+        #notificationPopup {
+            width: auto;
+            min-width: 400px;
+        }
+        
+        .notification-overlay {
+            display: none !important;
+        }
+        
+        body.notification-open {
+            overflow: auto !important;
+            height: auto !important;
+        }
+    }
+`;
+    document.head.appendChild(lockStyles);
+    
+    // Проверяем мобильное устройство
+    function isMobile() {
+        return window.innerWidth <= 767;
+    }
+    
+    const CLOSED_NOTIFICATIONS_KEY = 'closedNotifications';
+    const LAST_NOTIFICATION_ID_KEY = 'lastNotificationId';
+    
+    // Инициализация данных
+    const closedNotifications = JSON.parse(localStorage.getItem(CLOSED_NOTIFICATIONS_KEY)) || [];
+    let lastNotificationId = localStorage.getItem(LAST_NOTIFICATION_ID_KEY) || 0;
+    
+    // Функция для добавления нового уведомления
+    function addNewNotification(notification) {
+        if (closedNotifications.includes(notification.id.toString())) {
+            return;
+        }
+        
+        if (notification.id > lastNotificationId) {
+            lastNotificationId = notification.id;
+            localStorage.setItem(LAST_NOTIFICATION_ID_KEY, lastNotificationId);
+        }
+        
+        const notificationHtml = `
+            <div class="flash-message-alert alert alert-info" role="alert" data-id="${notification.id}">
+                <div class="notification-swipe-area">
+                    <div class="notification-content">
+                        <div class="notification-header">Новая статья от</div>
+                        <div class="notification-author">${notification.author}</div>
+                        <div class="notification-message">${notification.message}</div>
+                        ${notification.link ? `
+                        <div class="notification-footer">
+                            <a href="${notification.link}" class="notification-action">Перейти</a>
+                        </div>
+                        ` : ''}
+                    </div>
+                </div>
+                <button type="button" class="btn-close" aria-label="Закрыть уведомление">
+                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M1 1L11 11M1 11L11 1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                </button>
+            </div>
+        `;
+        
+        if (notificationPopup.querySelector('.empty-notification')) {
+            notificationPopup.innerHTML = notificationHtml;
+        } else {
+            notificationPopup.insertAdjacentHTML('afterbegin', notificationHtml);
+        }
+        
+        initNotification(notificationPopup.querySelector(`.flash-message-alert[data-id="${notification.id}"]`));
+        updateNotificationBadge(true);
+    }
+    
+    // Инициализация уведомления с улучшенным свайпом
+    function initNotification(alert) {
+        // Закрытие по кнопке
+        alert.querySelector('.btn-close').addEventListener('click', function(e) {
+            e.stopPropagation();
+            closeAlert(alert);
+        });
+        
+        // Свайп только на мобильных
+        if (isMobile()) {
+            const swipeArea = alert.querySelector('.notification-swipe-area');
+            let startX = 0;
+            let currentX = 0;
+            let isSwiping = false;
+            const MIN_SWIPE_DISTANCE = 50; // Минимальное расстояние для активации свайпа
+            
+            swipeArea.addEventListener('touchstart', function(e) {
+                if (e.touches.length !== 1) return;
+                startX = e.touches[0].clientX;
+                currentX = startX;
+                isSwiping = false;
+                alert.style.transition = 'none';
+                e.stopPropagation();
+            }, {passive: true});
+            
+            swipeArea.addEventListener('touchmove', function(e) {
+                if (e.touches.length !== 1) return;
+                currentX = e.touches[0].clientX;
+                const diff = currentX - startX;
+                
+                // Активируем свайп только после минимального расстояния
+                if (Math.abs(diff) > MIN_SWIPE_DISTANCE) {
+                    isSwiping = true;
+                    e.preventDefault();
+                }
+                
+                // Применяем трансформацию только если свайп активирован
+                if (isSwiping && diff < 0) {
+                    alert.style.transform = `translateX(${diff}px)`;
+                    alert.style.opacity = 1 - Math.abs(diff)/150;
+                }
+            }, {passive: false});
+            
+            swipeArea.addEventListener('touchend', function(e) {
+                if (!isSwiping) return;
+                
+                const diff = currentX - startX;
+                alert.style.transition = 'transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1)';
+                
+                if (diff < -100) {
+                    alert.classList.add('swipe-out');
+                    setTimeout(() => closeAlert(alert), 400);
+                } else {
+                    alert.style.transform = '';
+                    alert.style.opacity = '';
+                }
+                
+                isSwiping = false;
+                e.stopPropagation();
+            }, {passive: true});
+        }
+    }
+    
+    // Остальной код инициализации
+    document.querySelectorAll('.flash-message-alert').forEach(alert => {
+        const alertId = alert.getAttribute('data-id');
+        
+        if (closedNotifications.includes(alertId)) {
+            alert.style.display = 'none';
+            return;
+        }
+        
+        initNotification(alert);
+        
+        if (parseInt(alertId) > lastNotificationId) {
+            lastNotificationId = parseInt(alertId);
+            localStorage.setItem(LAST_NOTIFICATION_ID_KEY, lastNotificationId);
+        }
+    });
+    
+    checkEmptyState();
+    updateNotificationBadge();
+    
+    if (notificationBtn) {
+        notificationBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            toggleNotificationPopup();
+        });
+    }
+    
+    // Обработчик клика по оверлею
+    overlay.addEventListener('click', function(e) {
+        if (e.target === overlay) {
+            closeNotificationPopup();
+        }
+    });
+    
+    // Блокируем всплытие кликов по самому попапу
+    if (notificationPopup) {
+        notificationPopup.addEventListener('click', function(e) {
+            e.stopPropagation();
+        });
+    }
+    
+    function toggleNotificationPopup() {
+        if (notificationPopup.classList.contains('show')) {
+            closeNotificationPopup();
+        } else {
+            openNotificationPopup();
+        }
+    }
+    
+    function openNotificationPopup() {
+    document.body.classList.add('notification-open');
+    overlay.style.display = 'block';
+    notificationPopup.classList.add('show');
+    notificationPopup.style.opacity = '1';
+    notificationPopup.style.pointerEvents = 'auto';
+}
+
+function closeNotificationPopup() {
+    document.body.classList.remove('notification-open');
+    overlay.style.display = 'none';
+    notificationPopup.classList.remove('show');
+    
+    
+}
+    
+    function closeAlert(alert) {
+        const alertId = alert.getAttribute('data-id');
+        
+        if (alertId) {
+            closedNotifications.push(alertId);
+            localStorage.setItem(CLOSED_NOTIFICATIONS_KEY, JSON.stringify(closedNotifications));
+        }
+        
+        alert.style.transition = 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)';
+        alert.style.overflow = 'hidden';
+        alert.style.opacity = '0';
+        alert.style.height = alert.offsetHeight + 'px';
+        
+        setTimeout(() => {
+            alert.style.height = '0';
+            alert.style.marginBottom = '0';
+            alert.style.paddingTop = '0';
+            alert.style.paddingBottom = '0';
+        }, 10);
+        
+        setTimeout(() => {
+            alert.remove();
+            checkEmptyState();
+            updateNotificationBadge();
+        }, 410);
+    }
+    
+    function checkEmptyState() {
+        const visibleAlerts = document.querySelectorAll('.flash-message-alert:not([style*="display: none"])');
+        
+        if (visibleAlerts.length === 0 && 
+            !notificationPopup.querySelector('.empty-notification')) {
+            notificationPopup.innerHTML = `
+                <div class="empty-notification">
+                    <div class="empty-icon">📭</div>
+                    <p>Уведомлений нет</p>
+                </div>
+            `;
+        }
+    }
+    
+    function updateNotificationBadge(forceShow) {
+        if (!notificationBtn) return;
+        
+        const hasUnread = forceShow || document.querySelector('.flash-message-alert:not([style*="display: none"])') !== null;
+        
+        if (hasUnread) {
+            notificationBtn.setAttribute('data-unread', 'true');
+        } else {
+            notificationBtn.removeAttribute('data-unread');
+        }
+    }
+    
+    // Для тестирования
+    window.simulateNewNotifications = function() {
+        const newNotification = {
+            id: lastNotificationId + 1,
+            author: "Новый автор",
+            message: "Новое сообщение в уведомлении",
+            link: "/new-article"
+        };
+        
+        addNewNotification(newNotification);
+    };
+});
+</script>

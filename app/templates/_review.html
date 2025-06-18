@@ -1,0 +1,112 @@
+<div class="review-container" style="
+    display: flex; 
+    gap: 1rem; 
+    padding: 1.25rem; 
+    margin-bottom: 1rem;
+    border-radius: 8px;
+    background-color: var(--color-bg);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    border: 1px solid var(--color-border);
+">
+    <div class="avatar-container" style="flex-shrink: 0;">
+        <a href="{{ url_for('user', username=review.author.username) }}">
+            <img class="avatar" src="{{ review.author.avatar(70) }}" style="
+                width: 70px; 
+                height: 70px; 
+                border-radius: 50%; 
+                object-fit: cover;
+                transition: transform 0.3s ease;
+            "/>
+        </a>
+    </div>
+    
+    <div class="review-content" style="flex-grow: 1; min-width: 0;">
+        <div class="review-header" style="margin-bottom: 0.75rem;">
+            <a class="profile-link" href="{{ url_for('user', username=review.author.username) }}" style="
+                color: var(--color-body-text); 
+                font-weight: bold;
+                text-decoration: none;
+                font-size: 1rem;
+                transition: color 0.2s ease;
+            ">
+                {{ review.author.full_name }}
+            </a>
+            
+            <span style="
+                color: var(--color-body-text); 
+                opacity: 0.8; 
+                margin-left: 0.5rem;
+                transition: opacity 0.2s ease;
+            ">
+                Оценка: {{ review.rate }}
+            </span>
+        </div>
+        
+        <div class="review-text" style="
+            color: var(--color-body-text); 
+            margin-bottom: 0.75rem;
+            transition: color 0.2s ease;
+        ">
+            {{ review.comment }}
+        </div>
+        
+        {% if review.author == current_user %}
+        <div class="review-actions" style="margin-bottom: 0.75rem;">
+            <a href="{{ url_for('page', id=review.page_id, delete=review.id) }}" style="
+                color: var(--color-accent);
+                text-decoration: none;
+                font-size: 0.875rem;
+                padding: 4px 8px;
+                border-radius: 4px;
+                transition: all 0.2s ease;
+            ">
+                Удалить отзыв
+            </a>
+        </div>
+        {% endif %}
+        
+        <div class="review-footer" style="
+            font-size: 0.75rem; 
+            color: var(--color-body-text); 
+            opacity: 0.7;
+            transition: opacity 0.2s ease;
+        ">
+            Оставил(а) отзыв {{ moment(review.timestamp).fromNow() }}
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Анимации при наведении */
+    .review-container:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+        border-color: var(--color-accent-light);
+    }
+    
+    .review-container:hover .avatar {
+        transform: scale(1.03);
+    }
+    
+    .review-container:hover .profile-link {
+        color: var(--color-accent);
+    }
+    
+    .review-container:hover .review-header span {
+        opacity: 1;
+    }
+    
+    .review-container:hover .review-text {
+        color: var(--color-body-text-dark);
+    }
+    
+    .review-container:hover .review-footer {
+        opacity: 0.9;
+    }
+    
+    .review-actions a:hover {
+        background-color: var(--color-accent-light);
+        color: white;
+    }
+</style>

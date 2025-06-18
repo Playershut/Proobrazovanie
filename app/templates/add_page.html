@@ -1,0 +1,163 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <form method="POST" enctype="multipart/form-data" class="needs-validation article-form" novalidate>
+                {{ form.hidden_tag() }}
+                
+                <!-- Основная карточка -->
+                <div class="card article-card">
+                    <!-- Заголовок с иконкой -->
+                    <div class="card-header article-card-header">
+                        <h2 class="h5 mb-0">
+                            <i class="bi bi-pencil-square me-2"></i>Добавление статьи
+                        </h2>
+                    </div>
+                    
+                    <!-- Тело формы -->
+                    <div class="card-body p-4 p-lg-5">
+                        {% for field in form if field.name != 'csrf_token' and field.name != 'submit' %}
+                            <div class="mb-4 form-field">
+                                {{ field.label(class="form-label mb-2") }}
+                                
+                                {% if field.errors %}
+                                    {% if field.type == 'FileField' %}
+                                        <div class="file-upload-custom is-invalid">
+                                            <label class="file-upload-label">
+                                                <span class="file-upload-button">Выбрать файл</span>
+                                                <span class="file-upload-name">Не выбран ни один файл</span>
+                                                {{ field(class="file-upload-input is-invalid") }}
+                                            </label>
+                                            <div class="invalid-feedback">
+                                                {% for error in field.errors %}
+                                                    {{ error }}
+                                                {% endfor %}
+                                            </div>
+                                            <small class="file-hint">Макс. размер: 5MB</small>
+                                        </div>
+                                    {% elif field.type == 'SelectField' %}
+                                        {{ field(class="form-select is-invalid") }}
+                                    {% else %}
+                                        {{ field(class="form-control is-invalid") }}
+                                    {% endif %}
+                                {% else %}
+                                    {% if field.type == 'FileField' %}
+                                        <div class="file-upload-custom">
+                                            <label class="file-upload-label">
+                                                <span class="file-upload-button">Выбрать файл</span>
+                                                <span class="file-upload-name">Не выбран ни один файл</span>
+                                                {{ field(class="file-upload-input") }}
+                                            </label>
+                                            <small class="file-hint">Макс. размер: 5MB</small>
+                                        </div>
+                                    {% elif field.type == 'SelectField' %}
+                                        {{ field(class="form-select") }}
+                                    {% else %}
+                                        {{ field(class="form-control") }}
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                    
+                    <!-- Футер с кнопкой -->
+                    <div class="card-footer article-card-footer">
+                        <div class="d-flex justify-content-end">
+                            <button type="submit" class="btn submit-btn">
+                                <i class="bi bi-send-check me-2"></i>Опубликовать
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Стили только для кастомного поля загрузки файлов */
+    .file-upload-custom {
+        position: relative;
+        margin-bottom: 0.5rem;
+    }
+    
+    .file-upload-label {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        cursor: pointer;
+    }
+    
+    .file-upload-button {
+        background-color: var(--color-accent);
+        color: white;
+        border: none;
+        border-radius: 50px;
+        padding: 0.6rem 1.5rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: 500;
+    }
+    
+    .file-upload-button:hover {
+        background-color: var(--color-accent);
+        transform: translateY(-1px);
+    }
+    
+    .file-upload-name {
+        color: var(--color-primary-text);
+        padding: 0.6rem 1rem;
+        border-radius: 50px;
+        background-color: var(--color-card-bg);
+        border: 1px solid var(--color-bord);
+        flex-grow: 1;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    
+    .file-upload-input {
+        position: absolute;
+        width: 0.1px;
+        height: 0.1px;
+        opacity: 0;
+        overflow: hidden;
+        z-index: -1;
+    }
+    
+    .file-hint {
+        color: var(--color-secondary-text);
+        font-size: 0.85rem;
+        margin-top: 0.5rem;
+        margin-left: 0.5rem;
+    }
+    
+    /* Стили для ошибок */
+    .file-upload-custom.is-invalid .file-upload-name {
+        border-color: #dc3545;
+    }
+    
+    .file-upload-custom.is-invalid .file-upload-button {
+        background-color: #dc3545;
+    }
+</style>
+
+<script>
+    // Обработка отображения имени файла
+    document.querySelectorAll('.file-upload-input').forEach(input => {
+        input.addEventListener('change', function(e) {
+            const fileName = this.files[0] ? this.files[0].name : 'Не выбран ни один файл';
+            const nameElement = this.closest('.file-upload-label').querySelector('.file-upload-name');
+            nameElement.textContent = fileName;
+            
+            if (this.files[0]) {
+                nameElement.style.color = 'var(--color-accent)';
+            } else {
+                nameElement.style.color = 'var(--color-primary-text)';
+            }
+        });
+    });
+</script>
+{% endblock %}

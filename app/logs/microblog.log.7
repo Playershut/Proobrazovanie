@@ -1,0 +1,117 @@
+2025-06-18 00:32:38,433 ERROR: Exception on /login [POST] [in /var/www/proobrazovanie/data/www/ruproobrazovanie.ru/venv/lib/python3.8/site-packages/flask/app.py:838]
+Traceback (most recent call last):
+  File "/var/www/proobrazovanie/data/www/ruproobrazovanie.ru/venv/lib/python3.8/site-packages/pymysql/connections.py", line 649, in connect
+    sock = socket.create_connection(
+  File "/usr/lib/python3.8/socket.py", line 808, in create_connection
+    raise err
+  File "/usr/lib/python3.8/socket.py", line 796, in create_connection
+    sock.connect(sa)
+ConnectionRefusedError: [Errno 111] Connection refused
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/var/www/proobrazovanie/data/www/ruproobrazovanie.ru/venv/lib/python3.8/site-packages/sqlalchemy/engine/base.py", line 145, in __init__
+    self._dbapi_connection = engine.raw_connection()
+  File "/var/www/proobrazovanie/data/www/ruproobrazovanie.ru/venv/lib/python3.8/site-packages/sqlalchemy/engine/base.py", line 3297, in raw_connection
+    return self.pool.connect()
+  File "/var/www/proobrazovanie/data/www/ruproobrazovanie.ru/venv/lib/python3.8/site-packages/sqlalchemy/pool/base.py", line 449, in connect
+    return _ConnectionFairy._checkout(self)
+  File "/var/www/proobrazovanie/data/www/ruproobrazovanie.ru/venv/lib/python3.8/site-packages/sqlalchemy/pool/base.py", line 1264, in _checkout
+    fairy = _ConnectionRecord.checkout(pool)
+  File "/var/www/proobrazovanie/data/www/ruproobrazovanie.ru/venv/lib/python3.8/site-packages/sqlalchemy/pool/base.py", line 713, in checkout
+    rec = pool._do_get()
+  File "/var/www/proobrazovanie/data/www/ruproobrazovanie.ru/venv/lib/python3.8/site-packages/sqlalchemy/pool/impl.py", line 180, in _do_get
+    self._dec_overflow()
+  File "/var/www/proobrazovanie/data/www/ruproobrazovanie.ru/venv/lib/python3.8/site-packages/sqlalchemy/util/langhelpers.py", line 224, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "/var/www/proobrazovanie/data/www/ruproobrazovanie.ru/venv/lib/python3.8/site-packages/sqlalchemy/pool/impl.py", line 177, in _do_get
+    return self._create_connection()
+  File "/var/www/proobrazovanie/data/www/ruproobrazovanie.ru/venv/lib/python3.8/site-packages/sqlalchemy/pool/base.py", line 390, in _create_connection
+    return _ConnectionRecord(self)
+  File "/var/www/proobrazovanie/data/www/ruproobrazovanie.ru/venv/lib/python3.8/site-packages/sqlalchemy/pool/base.py", line 675, in __init__
+    self.__connect()
+  File "/var/www/proobrazovanie/data/www/ruproobrazovanie.ru/venv/lib/python3.8/site-packages/sqlalchemy/pool/base.py", line 902, in __connect
+    pool.logger.debug("Error on connect(): %s", e)
+  File "/var/www/proobrazovanie/data/www/ruproobrazovanie.ru/venv/lib/python3.8/site-packages/sqlalchemy/util/langhelpers.py", line 224, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "/var/www/proobrazovanie/data/www/ruproobrazovanie.ru/venv/lib/python3.8/site-packages/sqlalchemy/pool/base.py", line 897, in __connect
+    self.dbapi_connection = connection = pool._invoke_creator(self)
+  File "/var/www/proobrazovanie/data/www/ruproobrazovanie.ru/venv/lib/python3.8/site-packages/sqlalchemy/engine/create.py", line 646, in connect
+    return dialect.connect(*cargs, **cparams)
+  File "/var/www/proobrazovanie/data/www/ruproobrazovanie.ru/venv/lib/python3.8/site-packages/sqlalchemy/engine/default.py", line 625, in connect
+    return self.loaded_dbapi.connect(*cargs, **cparams)  # type: ignore[no-any-return]  # NOQA: E501
+  File "/var/www/proobrazovanie/data/www/ruproobrazovanie.ru/venv/lib/python3.8/site-packages/pymysql/connections.py", line 361, in __init__
+    self.connect()
+  File "/var/www/proobrazovanie/data/www/ruproobrazovanie.ru/venv/lib/python3.8/site-packages/pymysql/connections.py", line 716, in connect
+    raise exc
+pymysql.err.OperationalError: (2003, "Can't connect to MySQL server on '127.0.0.1' ([Errno 111] Connection refused)")
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/var/www/proobrazovanie/data/www/ruproobrazovanie.ru/venv/lib/python3.8/site-packages/flask/app.py", line 1473, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/var/www/proobrazovanie/data/www/ruproobrazovanie.ru/venv/lib/python3.8/site-packages/flask/app.py", line 882, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/var/www/proobrazovanie/data/www/ruproobrazovanie.ru/venv/lib/python3.8/site-packages/flask/app.py", line 880, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/var/www/proobrazovanie/data/www/ruproobrazovanie.ru/venv/lib/python3.8/site-packages/flask/app.py", line 865, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "/var/www/proobrazovanie/data/www/ruproobrazovanie.ru/app/routes.py", line 78, in login
+    user_obj = db.session.scalar(sa.select(Teacher).where(Teacher.username == form.username.data))
+  File "/var/www/proobrazovanie/data/www/ruproobrazovanie.ru/venv/lib/python3.8/site-packages/sqlalchemy/orm/scoping.py", line 1840, in scalar
+    return self._proxied.scalar(
+  File "/var/www/proobrazovanie/data/www/ruproobrazovanie.ru/venv/lib/python3.8/site-packages/sqlalchemy/orm/session.py", line 2413, in scalar
+    return self._execute_internal(
+  File "/var/www/proobrazovanie/data/www/ruproobrazovanie.ru/venv/lib/python3.8/site-packages/sqlalchemy/orm/session.py", line 2241, in _execute_internal
+    conn = self._connection_for_bind(bind)
+  File "/var/www/proobrazovanie/data/www/ruproobrazovanie.ru/venv/lib/python3.8/site-packages/sqlalchemy/orm/session.py", line 2110, in _connection_for_bind
+    return trans._connection_for_bind(engine, execution_options)
+  File "<string>", line 2, in _connection_for_bind
+  File "/var/www/proobrazovanie/data/www/ruproobrazovanie.ru/venv/lib/python3.8/site-packages/sqlalchemy/orm/state_changes.py", line 139, in _go
+    ret_value = fn(self, *arg, **kw)
+  File "/var/www/proobrazovanie/data/www/ruproobrazovanie.ru/venv/lib/python3.8/site-packages/sqlalchemy/orm/session.py", line 1189, in _connection_for_bind
+    conn = bind.connect()
+  File "/var/www/proobrazovanie/data/www/ruproobrazovanie.ru/venv/lib/python3.8/site-packages/sqlalchemy/engine/base.py", line 3273, in connect
+    return self._connection_cls(self)
+  File "/var/www/proobrazovanie/data/www/ruproobrazovanie.ru/venv/lib/python3.8/site-packages/sqlalchemy/engine/base.py", line 147, in __init__
+    Connection._handle_dbapi_exception_noconnection(
+  File "/var/www/proobrazovanie/data/www/ruproobrazovanie.ru/venv/lib/python3.8/site-packages/sqlalchemy/engine/base.py", line 2436, in _handle_dbapi_exception_noconnection
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "/var/www/proobrazovanie/data/www/ruproobrazovanie.ru/venv/lib/python3.8/site-packages/sqlalchemy/engine/base.py", line 145, in __init__
+    self._dbapi_connection = engine.raw_connection()
+  File "/var/www/proobrazovanie/data/www/ruproobrazovanie.ru/venv/lib/python3.8/site-packages/sqlalchemy/engine/base.py", line 3297, in raw_connection
+    return self.pool.connect()
+  File "/var/www/proobrazovanie/data/www/ruproobrazovanie.ru/venv/lib/python3.8/site-packages/sqlalchemy/pool/base.py", line 449, in connect
+    return _ConnectionFairy._checkout(self)
+  File "/var/www/proobrazovanie/data/www/ruproobrazovanie.ru/venv/lib/python3.8/site-packages/sqlalchemy/pool/base.py", line 1264, in _checkout
+    fairy = _ConnectionRecord.checkout(pool)
+  File "/var/www/proobrazovanie/data/www/ruproobrazovanie.ru/venv/lib/python3.8/site-packages/sqlalchemy/pool/base.py", line 713, in checkout
+    rec = pool._do_get()
+  File "/var/www/proobrazovanie/data/www/ruproobrazovanie.ru/venv/lib/python3.8/site-packages/sqlalchemy/pool/impl.py", line 180, in _do_get
+    self._dec_overflow()
+  File "/var/www/proobrazovanie/data/www/ruproobrazovanie.ru/venv/lib/python3.8/site-packages/sqlalchemy/util/langhelpers.py", line 224, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "/var/www/proobrazovanie/data/www/ruproobrazovanie.ru/venv/lib/python3.8/site-packages/sqlalchemy/pool/impl.py", line 177, in _do_get
+    return self._create_connection()
+  File "/var/www/proobrazovanie/data/www/ruproobrazovanie.ru/venv/lib/python3.8/site-packages/sqlalchemy/pool/base.py", line 390, in _create_connection
+    return _ConnectionRecord(self)
+  File "/var/www/proobrazovanie/data/www/ruproobrazovanie.ru/venv/lib/python3.8/site-packages/sqlalchemy/pool/base.py", line 675, in __init__
+    self.__connect()
+  File "/var/www/proobrazovanie/data/www/ruproobrazovanie.ru/venv/lib/python3.8/site-packages/sqlalchemy/pool/base.py", line 902, in __connect
+    pool.logger.debug("Error on connect(): %s", e)
+  File "/var/www/proobrazovanie/data/www/ruproobrazovanie.ru/venv/lib/python3.8/site-packages/sqlalchemy/util/langhelpers.py", line 224, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "/var/www/proobrazovanie/data/www/ruproobrazovanie.ru/venv/lib/python3.8/site-packages/sqlalchemy/pool/base.py", line 897, in __connect
+    self.dbapi_connection = connection = pool._invoke_creator(self)
+  File "/var/www/proobrazovanie/data/www/ruproobrazovanie.ru/venv/lib/python3.8/site-packages/sqlalchemy/engine/create.py", line 646, in connect
+    return dialect.connect(*cargs, **cparams)
+  File "/var/www/proobrazovanie/data/www/ruproobrazovanie.ru/venv/lib/python3.8/site-packages/sqlalchemy/engine/default.py", line 625, in connect
+    return self.loaded_dbapi.connect(*cargs, **cparams)  # type: ignore[no-any-return]  # NOQA: E501
+  File "/var/www/proobrazovanie/data/www/ruproobrazovanie.ru/venv/lib/python3.8/site-packages/pymysql/connections.py", line 361, in __init__
+    self.connect()
+  File "/var/www/proobrazovanie/data/www/ruproobrazovanie.ru/venv/lib/python3.8/site-packages/pymysql/connections.py", line 716, in connect
+    raise exc
+sqlalchemy.exc.OperationalError: (pymysql.err.OperationalError) (2003, "Can't connect to MySQL server on '127.0.0.1' ([Errno 111] Connection refused)")
+(Background on this error at: https://sqlalche.me/e/20/e3q8)

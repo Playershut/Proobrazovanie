@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+{% import 'bootstrap_wtf.html' as wtf %}
+
+{% block content %}
+<div class="search-container" style="max-width: 1200px; margin: 20px auto; padding: 0 15px;">
+    <!-- Форма поиска -->
+    <div class="search-card" style="background: var(--color-card-bg); border-radius: 20px; box-shadow: 0 4px 8px var(--color-shadow); margin-bottom: 30px; overflow: hidden; border: 1px solid var(--color-bord);">
+        <div class="search-header" style="background: var(--color-accent); color: white; padding: 18px 25px; border-radius: 20px 20px 0 0;">
+            <h2 style="margin: 0; font-size: 1.3rem; color: white;">
+                <i class="bi bi-search" style="margin-right: 10px;"></i>Поиск статей
+            </h2>
+        </div>
+        
+        <div class="search-body" style="padding: 25px;">
+            <form method="post" style="margin: 0;">
+                {{ form.hidden_tag() }}
+                
+                <!-- Поле поиска -->
+                <div style="margin-bottom: 25px;">
+                    <label style="display: block; margin-bottom: 8px; color: var(--color-body-text); font-weight: 500;">Поиск по названию</label>
+                    {{ form.search(class="form-control", style="width: 100%; padding: 14px 20px; border: 1px solid var(--color-bord); border-radius: 16px; background: var(--color-card-bg); color: var(--color-body-text); font-size: 1rem;") }}
+                </div>
+                
+                <!-- Фильтры в строке -->
+                <div style="display: flex; flex-wrap: wrap; margin: 0 -12px 25px;">
+                    <div style="flex: 1; min-width: 200px; padding: 0 12px; margin-bottom: 18px;">
+                        <label style="display: block; margin-bottom: 8px; color: var(--color-body-text); font-weight: 500;">Класс/Курс</label>
+                        {{ form.grades(class="form-select", style="width: 100%; padding: 14px 20px; border: 1px solid var(--color-bord); border-radius: 16px; background: var(--color-card-bg); color: var(--color-body-text); font-size: 1rem;") }}
+                    </div>
+                    <div style="flex: 1; min-width: 200px; padding: 0 12px; margin-bottom: 18px;">
+                        <label style="display: block; margin-bottom: 8px; color: var(--color-body-text); font-weight: 500;">Предмет</label>
+                        {{ form.subjects(class="form-select", style="width: 100%; padding: 14px 20px; border: 1px solid var(--color-bord); border-radius: 16px; background: var(--color-card-bg); color: var(--color-body-text); font-size: 1rem;") }}
+                    </div>
+                    <div style="flex: 1; min-width: 200px; padding: 0 12px; margin-bottom: 18px;">
+                        <label style="display: block; margin-bottom: 8px; color: var(--color-body-text); font-weight: 500;">Тип работы</label>
+                        {{ form.types_of_work(class="form-select", style="width: 100%; padding: 14px 20px; border: 1px solid var(--color-bord); border-radius: 16px; background: var(--color-card-bg); color: var(--color-body-text); font-size: 1rem;") }}
+                    </div>
+                </div>
+                
+                <!-- Кнопки -->
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <a href="{{ url_for('explore') }}" style="color: var(--color-accent); text-decoration: none; font-size: 1rem; padding: 12px 0;">
+                        <i class="bi bi-arrow-counterclockwise" style="margin-right: 8px;"></i>Сбросить фильтры
+                    </a>
+                    <button type="submit" class="btn btn-primary" style="background: var(--color-accent); color: white; border: none; padding: 14px 28px; border-radius: 16px; cursor: pointer; font-size: 1rem; font-weight: 500;">
+                        <i class="bi bi-search" style="margin-right: 8px;"></i>Найти
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Результаты поиска -->
+    {% if posts %}
+        {% for post in posts %}
+            {% include '_post.html' %}
+        {% endfor %}
+    {% else %}
+        <div style="text-align: center; padding: 45px 25px; background: var(--color-card-bg); border-radius: 16px; border: 1px solid var(--color-bord); margin-bottom: 30px;">
+            <i class="bi bi-exclamation-circle" style="font-size: 2.2rem; color: var(--color-secondary-text); margin-bottom: 20px;"></i>
+            <h3 style="color: var(--color-secondary-text); margin-bottom: 15px; font-size: 1.3rem;">Статьи не найдены</h3>
+            <p style="color: var(--color-secondary-text); font-size: 1rem;">Попробуйте изменить параметры поиска</p>
+        </div>
+    {% endif %}
+
+    <!-- Пагинация -->
+    {% if prev_url or next_url %}
+    <nav style="margin-top: 35px;">
+        <ul style="display: flex; justify-content: center; list-style: none; padding: 0; gap: 12px;">
+            <li>
+                <a href="{{ prev_url }}" style="display: block; padding: 14px 24px; border: 1px solid var(--color-bord); border-radius: 16px; text-decoration: none; color: var(--color-accent); font-size: 1rem; {% if not prev_url %} opacity: 0.5; pointer-events: none; {% endif %}">
+                    <i class="bi bi-chevron-left" style="margin-right: 8px;"></i>Новые
+                </a>
+            </li>
+            <li>
+                <a href="{{ next_url }}" style="display: block; padding: 14px 24px; border: 1px solid var(--color-bord); border-radius: 16px; text-decoration: none; color: var(--color-accent); font-size: 1rem; {% if not next_url %} opacity: 0.5; pointer-events: none; {% endif %}">
+                    Старые<i class="bi bi-chevron-right" style="margin-left: 8px;"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    {% endif %}
+</div>
+
+<style>
+    /* Плавные переходы */
+    .search-card {
+        transition: all 0.3s ease;
+    }
+    
+    .form-control, .form-select, .btn-primary, nav a {
+        transition: all 0.2s ease;
+    }
+    
+    /* Эффекты при наведении */
+    .btn-primary:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px var(--color-shadow);
+    }
+    
+    nav a:hover {
+        background: rgba(13, 110, 253, 0.1);
+    }
+    
+    /* Адаптивность */
+    @media (max-width: 768px) {
+        .search-body {
+            padding: 20px !important;
+        }
+        
+        .search-header {
+            padding: 16px 20px !important;
+        }
+        
+        .search-card > div[style*="flex: 1"] {
+            flex: 100% !important;
+        }
+        
+        .btn-primary {
+            padding: 12px 20px !important;
+        }
+    }
+</style>
+{% endblock %}

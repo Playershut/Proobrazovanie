@@ -1,0 +1,113 @@
+{% macro form_field(field, autofocus) %}
+{% set combined_class_list = [] %}
+{% if field.render_kw and 'class' in field.render_kw %}
+    {% set _ = combined_class_list.append(field.render_kw['class']) %}
+{% endif %}
+
+{%- if field.type == 'BooleanField' %}
+    {% set _ = combined_class_list.append('form-check-input') %}
+<div class="form-check mb-4">
+    {{ field(class=combined_class_list|join(' ')) }}
+    {{ field.label(class='form-check-label text-dark') }}
+</div>
+{%- elif field.type == 'RadioField' %}
+{{ field.label(class='form-label text-dark fw-medium') }}
+{%- for item in field %}
+    {% set item_combined_class_list = [] %}
+    {% if item.render_kw and 'class' in item.render_kw %}
+        {% set _ = item_combined_class_list.append(item.render_kw['class']) %}
+    {% endif %}
+    {% set _ = item_combined_class_list.append('form-check-input') %}
+<div class="form-check{% if loop.last %} mb-4{% endif %}">
+    {{ item(class=item_combined_class_list|join(' ')) }}
+    {{ item.label(class='form-check-label text-dark') }}
+</div>
+{%- endfor %}
+{%- elif field.type == 'SelectField' %}
+    {% set _ = combined_class_list.append('form-select mb-3') %}
+{{ field.label(class='form-label text-dark fw-medium') }}
+{{ field(class=combined_class_list|join(' ')) }}
+{%- elif field.type == 'SelectMultipleField' %}
+    {% set _ = combined_class_list.append('form-select mb-3') %}
+    {% set _ = combined_class_list.append('select2-multiple') %}
+    {{ field.label(class='form-label text-dark fw-medium') }}
+    {{ field(class=combined_class_list|join(' '), autofocus=autofocus, data_placeholder='Выберите...') }}
+{%- elif field.type == 'TextAreaField' %}
+    {% set _ = combined_class_list.append('form-control' + (' is-invalid' if field.errors else '')) %}
+<div class="mb-4">
+    {{ field.label(class='form-label text-dark fw-medium') }}
+    {% if autofocus %}
+    {{ field(class=combined_class_list|join(' '), autofocus=True, style="border-color: #e3f2fd; min-height: 100px;") }}
+    {% else %}
+    {{ field(class=combined_class_list|join(' '), style="border-color: #e3f2fd; min-height: 100px;") }}
+    {% endif %}
+    {%- for error in field.errors %}
+    <div class="invalid-feedback text-danger">{{ error }}</div>
+    {%- endfor %}
+</div>
+{%- elif field.type == 'SubmitField' %}
+    {% set _ = combined_class_list.append('btn btn-primary mb-3 w-100 py-2') %}
+{{ field(class=combined_class_list|join(' '), style="background-color: #1e88e5; border: none; font-weight: 500;") }}
+{%- else %}
+    {% set _ = combined_class_list.append('form-control' + (' is-invalid' if field.errors else '')) %}
+<div class="mb-4">
+    {{ field.label(class='form-label text-dark fw-medium') }}
+    {% if autofocus %}
+    {{ field(class=combined_class_list|join(' '), autofocus=True, style="border-color: #e3f2fd;") }}
+    {% else %}
+    {{ field(class=combined_class_list|join(' '), style="border-color: #e3f2fd;") }}
+    {% endif %}
+    {%- for error in field.errors %}
+    <div class="invalid-feedback text-danger">{{ error }}</div>
+    {%- endfor %}
+</div>
+{%- endif %}
+{% endmacro %}
+
+{% macro quick_form(form, action="", method="post", id="", novalidate=False, enctype="") %}
+<form
+        {%- if action !=None %} action="{{ action }}" {% endif -%}
+        {%- if method %} method="{{ method }}" {% endif %}
+        {%- if id %} id="{{ id }}" {% endif -%}
+        {%- if novalidate %} novalidate{% endif -%}
+        {%- if enctype -%} enctype="{{ enctype }}" {%- endif -%}
+        class="needs-validation" novalidate>
+
+    {{ form.hidden_tag() }}
+    {%- for field, errors in form.errors.items() %}
+    {%- if form[field].widget.input_type == 'hidden' %}
+    {%- for error in errors %}
+    <div class="alert-tab error show">{{ error }}</div>
+    {%- endfor %}
+    {%- endif %}
+    {%- endfor %}
+
+    {% set ns = namespace(first_field=true) %}
+    {%- for field in form %}
+    {% if field.widget.input_type != 'hidden' -%}
+    {{ form_field(field, ns.first_field) }}
+    {% set ns.first_field = false %}
+    {%- endif %}
+    {%- endfor %}
+</form>
+{% endmacro %}
+<style>
+.select-container { position: relative; }
+
+.select-options {
+    display: none;
+    position: absolute;
+    z-index: 1000;
+    max-height: 200px;
+    overflow-y: auto;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    background-color: #fff;
+}
+
+.custom-select-multiple.is-open .select-options {
+    display: block;
+}
+</style>
