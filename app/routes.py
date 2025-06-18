@@ -168,7 +168,9 @@ def edit_profile():
         if form.avatar.data:
             image_file = form.avatar.data
 
-            if not allowed_file(image_file.filename):
+            allowed_extensions = {'png', 'jpg', 'jpeg', 'gif'}
+            file_extension = image_file.filename.rsplit('.', 1)[1].lower()
+            if file_extension not in allowed_extensions:
                 flash('Разрешены только изображения в форматах PNG, JPG, JPEG, GIF.')
                 return redirect(url_for('edit_profile'))
 
@@ -189,6 +191,7 @@ def edit_profile():
                 return redirect(url_for('edit_profile'))
 
             target_size = min(current_app.config['MAX_IMAGE_SIZE'])
+            
             width, height = img.size
 
             if width > height:
@@ -197,7 +200,7 @@ def edit_profile():
             else:
                 new_width = target_size
                 new_height = int(height * (target_size / width))
-
+                
             img = img.resize((new_width, new_height), Image.LANCZOS)
 
             left = (new_width - target_size) / 2
@@ -213,7 +216,7 @@ def edit_profile():
             img.save(final_avatar_path, optimize=True)
 
             flash('Ваш аватар успешно обновлен!')
-
+            
         current_user.username = form.username.data
         current_user.full_name = form.full_name.data
         current_user.about = form.about.data
@@ -529,7 +532,6 @@ def edit_page(id):
         form.grade.data = str(current_page.grade)
         form.type_of_work.data = str(current_page.type_of_work)
         form.subject.data = str(current_page.subject)
-
     return render_template('edit_page.html', title='Редактирование статьи', form=form)
 
 

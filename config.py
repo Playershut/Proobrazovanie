@@ -20,4 +20,3 @@ class Config:
     MAX_CONTENT_LENGTH = 512 * 1024 * 1024  # 1 GB
     MAX_IMAGE_SIZE = (128, 128)
     JPEG_QUALITY = 85
-    

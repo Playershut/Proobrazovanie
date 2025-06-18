@@ -164,3 +164,4 @@ class SearchForm(FlaskForm):
         self.types_of_work.choices = [(tow.id, tow.name) for tow in
                                       TypeOfWork.query.order_by(TypeOfWork.id).all()]
         self.subjects.choices = [(s.id, s.name) for s in Subject.query.order_by(Subject.id).all()]
+        

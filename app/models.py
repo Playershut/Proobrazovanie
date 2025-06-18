@@ -10,7 +10,7 @@ from flask import current_app, url_for
 from flask_login import UserMixin
 from hashlib import md5
 from sqlalchemy import ForeignKey, Table, Column, Integer, String, Text, Boolean, DateTime, Float
-from werkzeug.security import generate_password_hash, check_password_hash  # Добавлен импорт
+from werkzeug.security import generate_password_hash, check_password_hash
 
 from app import db, login, app
 

@@ -434,7 +434,6 @@ td {
     background: var(--color-accent) !important;
 }
 
-
 .accordion-button:focus {
     border-color: var(--color-primary-bg);
 }
@@ -571,8 +570,6 @@ td {
     }
 }
 
-
-
 /* Подвал */
 footer {
     background: var(--color-primary-bg);
@@ -582,7 +579,6 @@ footer {
     color: var(--color-body-text);
     flex-shrink: 0;
     padding: 20px 0;
-    
 }
 
 footer a:hover {
