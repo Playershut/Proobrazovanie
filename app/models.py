@@ -38,27 +38,7 @@ teacher_subject = Table(
 )
 
 
-# Модель Уведомления
-class Notification(db.Model):
-    """
-    Модель для хранения уведомлений пользователей.
-    """
-    __tablename__ = 'notifications'
-
-    id: so.Mapped[int] = so.mapped_column(primary_key=True)
-    user_id: so.Mapped[int] = so.mapped_column(ForeignKey('teachers.id'), nullable=False)
-    message: so.Mapped[str] = so.mapped_column(Text, nullable=False)
-    link: so.Mapped[Optional[str]] = so.mapped_column(String(256))
-    is_read: so.Mapped[bool] = so.mapped_column(Boolean, default=False)
-    timestamp: so.Mapped[datetime] = so.mapped_column(DateTime,
-                                                      default=lambda: datetime.now(timezone.utc))
-
-    user: so.Mapped['Teacher'] = so.relationship(back_populates='notifications')
-
-    def __repr__(self):
-        return f'<Notification {self.id}: {self.message[:50]}>'
-
-
+# === СЛОВАРИ ===
 # Модель Предмета
 class Subject(db.Model):
     """
@@ -120,6 +100,59 @@ class EducationalInstitution(db.Model):
 
     def __repr__(self):
         return f'<EducationalInstitution {self.name}>'
+
+
+# Модель Типа работы
+class TypeOfWork(db.Model):
+    """
+    Модель для представления типов учебных работ (например, "Конспект", "Презентация").
+    """
+    __tablename__ = 'types_of_work'
+    id: so.Mapped[int] = so.mapped_column(primary_key=True)
+    name: so.Mapped[str] = so.mapped_column(String(64), index=True, unique=True)
+
+    pages: so.Mapped[List['Page']] = so.relationship(back_populates='tow')
+
+    def __repr__(self):
+        return f'<TypeOfWork {self.name}>'
+
+
+# Модель Класса/Грейда
+class Grade(db.Model):
+    """
+    Модель для представления классов/грейдов (например, "5 класс", "11 класс").
+    """
+    __tablename__ = 'grades'
+    id: so.Mapped[int] = so.mapped_column(primary_key=True)
+    name: so.Mapped[str] = so.mapped_column(String(8), index=True, unique=True)
+
+    pages: so.Mapped[List['Page']] = so.relationship(back_populates='grd')
+
+    def __repr__(self):
+        return f'<Grade {self.name}>'
+
+
+# === ТАБЛИЦЫ ===
+
+# Модель Уведомления
+class Notification(db.Model):
+    """
+    Модель для хранения уведомлений пользователей.
+    """
+    __tablename__ = 'notifications'
+
+    id: so.Mapped[int] = so.mapped_column(primary_key=True)
+    user_id: so.Mapped[int] = so.mapped_column(ForeignKey('teachers.id'), nullable=False)
+    message: so.Mapped[str] = so.mapped_column(Text, nullable=False)
+    link: so.Mapped[Optional[str]] = so.mapped_column(String(256))
+    is_read: so.Mapped[bool] = so.mapped_column(Boolean, default=False)
+    timestamp: so.Mapped[datetime] = so.mapped_column(DateTime,
+                                                      default=lambda: datetime.now(timezone.utc))
+
+    user: so.Mapped['Teacher'] = so.relationship(back_populates='notifications')
+
+    def __repr__(self):
+        return f'<Notification {self.id}: {self.message[:50]}>'
 
 
 # Модель Учителя (Пользователя)
@@ -214,36 +247,6 @@ class Teacher(UserMixin, db.Model):
 
     def __repr__(self):
         return f'<Teacher {self.username}>'
-
-
-# Модель Типа работы
-class TypeOfWork(db.Model):
-    """
-    Модель для представления типов учебных работ (например, "Конспект", "Презентация").
-    """
-    __tablename__ = 'types_of_work'
-    id: so.Mapped[int] = so.mapped_column(primary_key=True)
-    name: so.Mapped[str] = so.mapped_column(String(64), index=True, unique=True)
-
-    pages: so.Mapped[List['Page']] = so.relationship(back_populates='tow')
-
-    def __repr__(self):
-        return f'<TypeOfWork {self.name}>'
-
-
-# Модель Класса/Грейда
-class Grade(db.Model):
-    """
-    Модель для представления классов/грейдов (например, "5 класс", "11 класс").
-    """
-    __tablename__ = 'grades'
-    id: so.Mapped[int] = so.mapped_column(primary_key=True)
-    name: so.Mapped[str] = so.mapped_column(String(8), index=True, unique=True)
-
-    pages: so.Mapped[List['Page']] = so.relationship(back_populates='grd')
-
-    def __repr__(self):
-        return f'<Grade {self.name}>'
 
 
 # Модель Страницы/Статьи
