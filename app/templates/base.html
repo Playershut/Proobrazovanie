@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-   <!-- Этот скрипт ДОЛЖЕН БЫТЬ ПЕРВЫМ в <head> -->
+  <!-- Этот скрипт ДОЛЖЕН БЫТЬ ПЕРВЫМ в <head> -->
   <script>
     // 1. МГНОВЕННО создаём overlay ещё до начала рендера страницы
     (function() {
@@ -29,113 +29,54 @@
     })();
   </script>
 
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/theme.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/header.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/footer.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/notifications.css') }}">
+  {% block styles %}{% endblock %}
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  {% if title %}
+  <title>{{ title }} - ПроОбразование</title>
+  {% else %}
+  <title>Добро пожаловать!</title>
+  {% endif %}
   
-    <meta charset="UTF-8">
-      <style>
-    /* Анимация исчезновения overlay */
-    #theme-preloader {
-      animation: themeFadeOut 0.1s ease-out forwards;
-      animation-delay: 0.1s; /* Даём время на загрузку */
-    }
-    
-    @keyframes themeFadeOut {
-      to { opacity: 0; }
-    }
-    
-    /* Базовые стили темы */
-    :root {
-      --bg-color: #ffffff;
-      --text-color: #000000;
-      transition: background-color 0.1s, color 0.1s;
-    }
-    
-    :root.dark {
-      --bg-color: #121212;
-      --text-color: #ffffff;
-    }
-    
-    body {
-      background-color: var(--bg-color);
-      color: var(--text-color);
-      margin: 0;
-      opacity: 0; /* Начально скрываем контент */
-      animation: contentFadeIn 0.5s ease-out forwards;
-      animation-delay: 0.1s; /* После завершения анимации overlay */
-    }
-    
-    @keyframes contentFadeIn {
-      to { opacity: 1; }
-    }
-  </style>
-
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    {% if title %}
-    <title>{{ title }} - ПроОбразование</title>
-    {% else %}
-    <title>Добро пожаловать!</title>
-    {% endif %}
-    
-
-    <link rel="icon" id="favicon" href="/static/icon.png" type="image/png">
-    
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+  <link rel="icon" id="favicon" href="/static/icon.png" type="image/png">
+  
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
     crossorigin="anonymous" referrerpolicy="no-referrer"/>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
-
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
 </head>
 <body style="display: flex; flex-direction: column; min-height: 100vh;">
-    <div class="page-transition page-visible" style="flex: 1 0 auto;">
+  <div class="page-transition page-visible" style="flex: 1 0 auto;">
     <header class="header">
-    <div class="header-container">
-        <div class="logo-container"> <a href="/" class="d-flex align-items-center text-decoration-none">
-                <img src="/static/icon.png" alt="ПроОбразование" class="logo" id="siteLogo">
-                <span class="logo-text">
-                    <span class="logo-part1">Про</span><span class="logo-part2">Образование</span>
-                </span>
-            </a>
+      <div class="header-container">
+        <div class="logo-container"> 
+          <a href="/" class="d-flex align-items-center text-decoration-none">
+            <img src="/static/icon.png" alt="ПроОбразование" class="logo" id="siteLogo">
+            <span class="logo-text">
+              <span class="logo-part1">Про</span><span class="logo-part2">Образование</span>
+            </span>
+          </a>
         </div>
-<div class="theme-switcher">
-  <button id="themeToggle" aria-label="Переключить тему">
-    <i class="fas fa-sun"></i>
-    <i class="fas fa-moon"></i>
-  </button>
-</div>
+        <div class="theme-switcher">
+          <button id="themeToggle" aria-label="Переключить тему">
+            <i class="fas fa-sun"></i>
+            <i class="fas fa-moon"></i>
+          </button>
+        </div>
 
         <nav class="desktop-nav">
-            <ul class="nav nav-pills">
-                {% if current_user.is_anonymous %}
-                <li class="nav-item"><a href="{{ url_for('login') }}" class="nav-link {% if request.endpoint == 'login' %}active{% endif %}">Войти</a></li>
-                {% else %}
-                <li class="nav-item"><a href="{{ url_for('index') }}" class="nav-link {% if request.endpoint == 'index' %}active{% endif %}">Главная</a></li>
-                <li class="nav-item"><a href="{{ url_for('explore') }}" class="nav-link {% if request.endpoint == 'explore' %}active{% endif %}">Поиск</a></li>
-                <li class="nav-item"><a href="{{ url_for('add_page') }}" class="nav-link {% if request.endpoint == 'add_page' %}active{% endif %}">Добавить статью</a></li>
-                <li class="nav-item"><a href="{{ url_for('user', username=current_user.username) }}" class="nav-link {% if request.path == '/user/' + current_user.username %}active{% endif %}">Профиль</a></li>
-                <li class="nav-item"><a href="{{ url_for('logout') }}" class="nav-link">Выйти</a></li>
-                {% endif %}
-            </ul>
-        </nav>
-
-        <button class="mobile-menu-btn">
-            <i class="fas fa-bars"></i>
-        </button>
-    </div>
-
-
-
-    <div class="mobile-nav">
-        <div class="mobile-nav-header">
-            <span>Меню</span>
-            <button class="mobile-nav-close">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-        <ul class="nav nav-pills flex-column">
+          <ul class="nav nav-pills">
             {% if current_user.is_anonymous %}
             <li class="nav-item"><a href="{{ url_for('login') }}" class="nav-link {% if request.endpoint == 'login' %}active{% endif %}">Войти</a></li>
             {% else %}
@@ -145,606 +86,97 @@
             <li class="nav-item"><a href="{{ url_for('user', username=current_user.username) }}" class="nav-link {% if request.path == '/user/' + current_user.username %}active{% endif %}">Профиль</a></li>
             <li class="nav-item"><a href="{{ url_for('logout') }}" class="nav-link">Выйти</a></li>
             {% endif %}
+          </ul>
+        </nav>
+
+        <button class="mobile-menu-btn">
+          <i class="fas fa-bars"></i>
+        </button>
+      </div>
+
+      <div class="mobile-nav">
+        <div class="mobile-nav-header">
+          <span>Меню</span>
+          <button class="mobile-nav-close">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <ul class="nav nav-pills flex-column">
+          {% if current_user.is_anonymous %}
+          <li class="nav-item"><a href="{{ url_for('login') }}" class="nav-link {% if request.endpoint == 'login' %}active{% endif %}">Войти</a></li>
+          {% else %}
+          <li class="nav-item"><a href="{{ url_for('index') }}" class="nav-link {% if request.endpoint == 'index' %}active{% endif %}">Главная</a></li>
+          <li class="nav-item"><a href="{{ url_for('explore') }}" class="nav-link {% if request.endpoint == 'explore' %}active{% endif %}">Поиск</a></li>
+          <li class="nav-item"><a href="{{ url_for('add_page') }}" class="nav-link {% if request.endpoint == 'add_page' %}active{% endif %}">Добавить статью</a></li>
+          <li class="nav-item"><a href="{{ url_for('user', username=current_user.username) }}" class="nav-link {% if request.path == '/user/' + current_user.username %}active{% endif %}">Профиль</a></li>
+          <li class="nav-item"><a href="{{ url_for('logout') }}" class="nav-link">Выйти</a></li>
+          {% endif %}
         </ul>
         <div class="mobile-nav-footer">
-        <nav class="footer-nav">
-    <a href="{{ url_for('privacy_policy') }}" class="nav-link no-border">Политика конфиденциальности</a>
-    <a href="{{ url_for('faq') }}" class="nav-link no-border">FAQ</a>
-    <a href="{{ url_for('about_us') }}" class="nav-link no-border">О нас</a>
-</nav>
-    <p class="copyright">© 2025 Проект «ПроОбразование»</p>
-</div>
-    </div>
-    <div class="overlay"></div>
+          <nav class="footer-nav">
+            <a href="{{ url_for('privacy_policy') }}" class="nav-link no-border">Политика конфиденциальности</a>
+            <a href="{{ url_for('faq') }}" class="nav-link no-border">FAQ</a>
+            <a href="{{ url_for('about_us') }}" class="nav-link no-border">О нас</a>
+          </nav>
+          <p class="copyright">© 2025 Проект «ПроОбразование»</p>
+        </div>
+      </div>
+      <div class="overlay"></div>
+    </header>
 
-</header>
-
-
-<main>
-    <div class="container">
+    <main>
+      <div class="container">
         {% with messages = get_flashed_messages() %}
         {% if messages %}
         {% for message in messages %}
-
         {% endfor %}
         {% endif %}
         {% endwith %}
 
         {% block content %}{% endblock %}
-    </div>
-</main>
-{% include "_flash_messages.html" %}
+      </div>
+    </main>
+    {% include "_flash_messages.html" %}
+  </div>
+  
+  <button id="notificationBtn" aria-label="Уведомления">
+    <span class="dot"></span>
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+      <path d="M12 2C10.34 2 9 3.34 9 5V6.68C6.72 7.74 5.25 10.04 5.25 12.75V17L4 18.25V19H20V18.25L18.75 17V12.75C18.75 10.04 17.28 7.74 15 6.68V5C15 3.34 13.66 2 12 2Z" fill="currentColor"/>
+      <path d="M10 21C10 21.8284 10.6716 22.5 11.5 22.5C12.3284 22.5 13 21.8284 13 21H10Z" fill="currentColor"/>
+    </svg>
+  </button>
 
-</div>
-<button id="notificationBtn" aria-label="Уведомления">
-  <span class="dot"></span>
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-    <path d="M12 2C10.34 2 9 3.34 9 5V6.68C6.72 7.74 5.25 10.04 5.25 12.75V17L4 18.25V19H20V18.25L18.75 17V12.75C18.75 10.04 17.28 7.74 15 6.68V5C15 3.34 13.66 2 12 2Z" fill="currentColor"/>
-    <path d="M10 21C10 21.8284 10.6716 22.5 11.5 22.5C12.3284 22.5 13 21.8284 13 21H10Z" fill="currentColor"/>
-  </svg>
-</button>
-
-
-
-<style>
-/* === Минималистичная кнопка === */
-#notificationBtn {
-  position: fixed;
-  bottom: 24px;
-  right: 24px;
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  border: none;
-  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-  box-shadow: 0 4px 20px rgba(79, 172, 254, 0.3);
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  z-index: 1200;
-  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-}
-
-#notificationBtn.has-notifications {
-  animation: pulse 2.5s infinite;
-}
-
-#notificationBtn:hover {
-  transform: scale(1.1) rotate(10deg);
-  box-shadow: 0 6px 24px rgba(79, 172, 254, 0.4);
-  animation: none !important;
-}
-
-#notificationBtn:active {
-  transform: scale(0.95);
-}
-
-/* Анимация пульсации */
-@keyframes pulse {
-  0% {
-    box-shadow: 0 0 0 0 rgba(79, 172, 254, 0.7);
-  }
-  70% {
-    box-shadow: 0 0 0 12px rgba(79, 172, 254, 0);
-  }
-  100% {
-    box-shadow: 0 0 0 0 rgba(79, 172, 254, 0);
-  }
-}
-
-/* Индикатор */
-#notificationBtn .dot {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  width: 10px;
-  height: 10px;
-  background-color: white;
-  border: 2px solid #4facfe;
-  border-radius: 50%;
-  display: none;
-  animation: dotPulse 1.5s infinite;
-}
-
-@keyframes dotPulse {
-  0% {
-    transform: scale(0.95);
-    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7);
-  }
-  70% {
-    transform: scale(1);
-    box-shadow: 0 0 0 6px rgba(255, 255, 255, 0);
-  }
-  100% {
-    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
-  }
-}
-
-/* === Попап уведомлений === */
-#notificationPopup {
-  position: fixed;
-  bottom: 90px;
-  right: 24px;
-  width: 320px;
-  max-width: 90%;
-  background-color: var(--color-primary-bg) !important;
-  border-radius: 12px;
-  box-shadow: 0 12px 28px var( --color-shadow) !important;
-  padding: 16px;
-  max-height: 70vh;
-  overflow-y: auto;
-  z-index: 1100;
-  opacity: 0;
-  transform: translateY(20px) scale(0.95);
-  pointer-events: none;
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-#notificationPopup[aria-hidden="false"] {
-  opacity: 1;
-  transform: translateY(0) scale(1);
-  pointer-events: auto;
-}
-.notification-message {
-    color: var(--color-body-text) !important;
-    line-height: 1.4;
-    margin: 4px 0 6px;
-    word-break: break-word;
-}
-/* Уведомление */
-.flash-message-alert {
-  position: relative;
-  padding: 14px 16px;
-  background: var( --color-body-bg) !important;
-  border-radius: 8px;
-  margin-bottom: 12px;
-  font-size: 14px;
-  color: #333;
-  border: 1px solid var( --color-body-bg) !important;
-  animation: fadeIn 0.4s ease-out;
-  transition: all 0.3s ease;
-}
-
-.flash-message-alert:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px var( --color-body-tex) !important;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px) scale(0.95); }
-  to   { opacity: 1; transform: translateY(0) scale(1); }
-}
-
-/* Кнопка закрытия */
-.btn-close {
-  position: absolute;
-  top: 8px;
-  right: 10px;
-  background: none;
-  border: none;
-  font-size: 16px;
-  cursor: pointer;
-  opacity: 0.4;
-  transition: all 0.2s ease;
-}
-.btn-close:hover {
-  opacity: 1;
-  transform: rotate(90deg);
-}
-
-/* Пусто */
-.empty-notification {
-  text-align: center;
-  color: #777;
-  padding: 30px 10px;
-  animation: fadeIn 0.5s ease;
-}
-.empty-icon {
-  font-size: 36px;
-  margin-bottom: 8px;
-  opacity: 0.5;
-  animation: bounce 2s infinite;
-}
-
-@keyframes bounce {
-  0%, 20%, 50%, 80%, 100% {
-    transform: translateY(0);
-  }
-  40% {
-    transform: translateY(-10px);
-  }
-  60% {
-    transform: translateY(-5px);
-  }
-}
-
-/* Адаптив */
-@media (max-width: 576px) {
-  #notificationPopup {
-    right: 12px;
-    left: 12px;
-    width: auto;
-    bottom: 80px;
-  }
-}
-</style>
-
-<footer class="footer" style="flex-shrink: 0;">
+  <footer class="footer" style="flex-shrink: 0;">
     <div class="footer-container">
-        <nav class="footer-nav">
-            <a href="{{ url_for('index') }}" class="nav-link">Главная</a>
-            <a href="{{ url_for('privacy_policy') }}" class="nav-link">Политика конфиденциальности</a>
-            <a href="{{ url_for('faq') }}" class="nav-link">FAQ</a>
-            <a href="{{ url_for('about_us') }}" class="nav-link">О нас</a>
-        </nav>
-        <p class="copyright">© 2025 Проект «ПроОбразование»</p>
+      <nav class="footer-nav">
+        <a href="{{ url_for('index') }}" class="nav-link">Главная</a>
+        <a href="{{ url_for('privacy_policy') }}" class="nav-link">Политика конфиденциальности</a>
+        <a href="{{ url_for('faq') }}" class="nav-link">FAQ</a>
+        <a href="{{ url_for('about_us') }}" class="nav-link">О нас</a>
+      </nav>
+      <p class="copyright">© 2025 Проект «ПроОбразование»</p>
     </div>
-</footer>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/i18n/ru.js"></script>
-<script src="{{ url_for('static', filename='main.js') }}"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
-{{ moment.include_moment() }}
-{{ moment.lang('ru') }}
-</body>
-<style>
-body {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-    margin: 0;
-}
-
-.footer {
-    background: var( --color-primary-bg) !important;
-    border-top: 1px solid #e0e0e0;
-    padding: 20px 0;
-    margin-top: auto;
-    width: 100%;
-    flex-shrink: 0;
-}
-
-main {
-    flex-grow: 1;
-}
-
-.footer-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 15px;
-}
-
-.footer-nav {
-    display: flex;
-    justify-content: center;
-    gap: 30px;
-    flex-wrap: nowrap;
-    margin-bottom: 15px;
-}
-
-.footer-nav .nav-link {
-    display: inline-block;
-    white-space: nowrap;
-    color: var(--color-body-text) !important;
-    text-decoration: none;
-    font-weight: 500;
-}
-
-.copyright {
-    text-align: center;
-   color: var(--color-body-text) !important;
-}
-</style>
-
-<script>
-  // Проверяем сохранённую тему ДО загрузки страницы
-  const savedTheme = localStorage.getItem('theme') || 'dark';
-  document.documentElement.setAttribute('data-theme', savedTheme);
-</script>
-<script>
-// Мобильное меню
-document.addEventListener('DOMContentLoaded', function() {
-    const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
-    const mobileNav = document.querySelector('.mobile-nav');
-    const mobileNavClose = document.querySelector('.mobile-nav-close');
-    const overlay = document.querySelector('.overlay');
-
-    // Открытие меню
-    mobileMenuBtn.addEventListener('click', function() {
-        mobileNav.classList.add('active');
-        overlay.classList.add('active');
-        document.body.style.overflow = 'hidden';
-    });
-
-    // Закрытие меню
-    function closeMobileMenu() {
-        mobileNav.classList.remove('active');
-        overlay.classList.remove('active');
-        document.body.style.overflow = '';
-    }
-
-    mobileNavClose.addEventListener('click', closeMobileMenu);
-    overlay.addEventListener('click', closeMobileMenu);
-
-    // Закрытие при клике на пункт меню
-    document.querySelectorAll('.mobile-nav .nav-link').forEach(link => {
-        link.addEventListener('click', closeMobileMenu);
-    });
-
-    // Кастомный селект
-    const customSelects = document.querySelectorAll('.custom-select-multiple');
-    customSelects.forEach(selectContainer => {
-        // ... (ваш существующий код для кастомных селектов)
-    });
-
-    // Показать/скрыть пароль
-    const passwordInput = document.querySelector('input[type="password"]');
-    if (passwordInput) {
-        const eyeIcon = document.createElement('i');
-        eyeIcon.classList.add('fas', 'fa-eye', 'password-eye');
-        passwordInput.parentNode.appendChild(eyeIcon);
-
-        eyeIcon.addEventListener('click', () => {
-            if (passwordInput.type === 'password') {
-                passwordInput.type = 'text';
-                eyeIcon.classList.replace('fa-eye', 'fa-eye-slash');
-            } else {
-                passwordInput.type = 'password';
-                eyeIcon.classList.replace('fa-eye-slash', 'fa-eye');
-            }
-        });
-    }
-
-    // Инициализация Select2
-    $('.searchable-select').each(function() {
-        $(this).select2({
-            theme: "bootstrap-5",
-            placeholder: "Начните вводить для поиска...",
-            allowClear: true
-        }).next('.select2-container').addClass('mb-3');
-    });
-});
-</script>
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const mobileNav = document.querySelector('.mobile-nav');
-    const overlay = document.querySelector('.overlay');
-    const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
-
-    let touchStartX = 0;
-    let touchStartY = 0;
-    let touchEndX = 0;
-    let touchEndY = 0;
-    const swipeThreshold = 50; // минимальное расстояние для свайпа
-    const allowedStartArea = window.innerWidth * 0.3; // правая 30% ширины экрана
-
-    function openMobileMenu() {
-        mobileNav.classList.add('active');
-        overlay.classList.add('active');
-        document.body.style.overflow = 'hidden';
-    }
-
-    function closeMobileMenu() {
-        mobileNav.classList.remove('active');
-        overlay.classList.remove('active');
-        document.body.style.overflow = '';
-    }
-
-    document.addEventListener('touchstart', function(e) {
-        touchStartX = e.changedTouches[0].screenX;
-        touchStartY = e.changedTouches[0].screenY;
-    }, {passive: true});
-
-    document.addEventListener('touchmove', function(e) {
-        const currentX = e.changedTouches[0].screenX;
-        const currentY = e.changedTouches[0].screenY;
-        const deltaX = touchStartX - currentX;
-        const deltaY = Math.abs(touchStartY - currentY);
-
-        // Если свайп начался в правой части и идёт влево, блокируем прокрутку страницы и открываем меню
-        if (touchStartX > window.innerWidth - allowedStartArea && deltaX > 0 && deltaX > deltaY) {
-            e.preventDefault(); // блокируем скролл страницы
-        }
-
-        // Если меню открыто и свайп вправо (закрытие), блокируем переход браузера "назад"
-        if (mobileNav.classList.contains('active') && currentX - touchStartX > swipeThreshold && deltaX < 0 && deltaY < 30) {
-            e.preventDefault(); // блокируем дефолтное поведение (например, свайп назад)
-        }
-    }, {passive: false});
-
-    document.addEventListener('touchend', function(e) {
-        touchEndX = e.changedTouches[0].screenX;
-        const deltaX = touchStartX - touchEndX;
-        const deltaY = Math.abs(touchStartY - e.changedTouches[0].screenY);
-
-        // Открытие меню свайпом влево с правой части экрана
-        if (touchStartX > window.innerWidth - allowedStartArea && deltaX > swipeThreshold && !mobileNav.classList.contains('active')) {
-            openMobileMenu();
-        }
-
-        // Закрытие меню свайпом вправо
-        if (mobileNav.classList.contains('active') && (touchEndX - touchStartX) > swipeThreshold && deltaY < 30) {
-            closeMobileMenu();
-        }
-    }, {passive: true});
-
-    // Обработчики кнопок и оверлея
-    mobileMenuBtn.addEventListener('click', openMobileMenu);
-    overlay.addEventListener('click', closeMobileMenu);
-    const mobileNavClose = document.querySelector('.mobile-nav-close');
-    mobileNavClose.addEventListener('click', closeMobileMenu);
-    document.querySelectorAll('.mobile-nav .nav-link').forEach(link => {
-        link.addEventListener('click', closeMobileMenu);
-    });
-});
-</script>
-<script>
-// Функция для проверки видимости элементов
-function checkVisibility() {
-  const elements = document.querySelectorAll('.reveal');
-  elements.forEach(el => {
-    const rect = el.getBoundingClientRect();
-    const isVisible = (rect.top <= window.innerHeight * 0.8) && (rect.bottom >= 0);
-    if (isVisible) el.classList.add('active');
-  });
-}
-
-// Запуск при загрузке и скролле
-window.addEventListener('load', checkVisibility);
-window.addEventListener('scroll', checkVisibility);
-</script>
-
- <script>
-document.addEventListener('DOMContentLoaded', () => {
-  // Отслеживаем все клики по ссылкам
-  document.querySelectorAll('a[href]').forEach(link => {
-    // Пропускаем специальные ссылки
-    if (
-      link.target === '_blank' ||
-      link.href.startsWith('javascript:') ||
-      link.getAttribute('href').startsWith('#')
-    ) {
-      return;
-    }
-
-    link.addEventListener('click', (e) => {
-      // Если клик не мышкой (например, навигация браузера), пропускаем
-      if (e.clientX === 0 && e.clientY === 0) {
-        return;
-      }
-
-      // Для обычных кликов: плавный скролл вверх перед переходом
-      e.preventDefault();
-      window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
-      });
-
-      // Мгновенный переход после скролла
-      setTimeout(() => {
-        window.location.href = link.href;
-      }, 300); // Ждем завершения скролла
-    });
-  });
-});
-</script>
- <script>
-    // Функция создания элемента перехода
-    function createTransitionElement(isDark) {
-      const transition = document.createElement('div');
-      transition.className = 'theme-transition';
-      transition.style.backgroundColor = isDark ? '#141e2d' : '#ffffff';
-      document.body.appendChild(transition);
-
-      setTimeout(() => {
-        transition.remove();
-      }, 600);
-    }
-
-    // Функция применения темы
-    function applyTheme(isDark) {
-      // Сначала создаем элемент перехода
-      createTransitionElement(isDark);
-
-      // Затем применяем тему
-      document.documentElement.classList.toggle('dark', isDark);
-      document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
-
-      // Сохраняем в localStorage
-      localStorage.setItem('theme', isDark ? 'dark' : 'light');
-
-      // Обновляем favicon
-      const iconPath = isDark ? '/static/icon-night.png' : '/static/icon.png';
-      const icon = document.querySelector('link[rel="icon"]');
-      if (icon) icon.href = iconPath + '?v=' + Date.now();
-    }
-
-    // Инициализация темы при загрузке
-    (function initTheme() {
-      // Определяем текущую тему
-      const savedTheme = localStorage.getItem('theme');
-      const preferDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      const isDark = savedTheme ? savedTheme === 'dark' : preferDark;
-
-      // Сразу применяем тему (без анимации при первой загрузке)
-      document.documentElement.classList.toggle('dark', isDark);
-      document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
-
-      // Для перехода между страницами создаем анимацию
-      if (performance.navigation.type === performance.navigation.TYPE_NAVIGATE) {
-        createTransitionElement(isDark);
-      }
-    })();
-
-
+  </footer>
+  
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/i18n/ru.js"></script>
+  <script src="{{ url_for('static', filename='main.js') }}"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+  {{ moment.include_moment() }}
+  {{ moment.lang('ru') }}
+  
+  <script>
+    // Проверяем сохранённую тему ДО загрузки страницы
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    document.documentElement.setAttribute('data-theme', savedTheme);
   </script>
-<script>
-
-// 1. БЛОКИРУЕМ АНИМАЦИЮ ПЕРЕД ЗАГРУЗКОЙ
-(function() {
-  // Добавляем стиль, который отключает transition
-  const antiFlicker = document.createElement("style");
-  antiFlicker.textContent = `
-    * {
-      transition: none !important;
-    }
-  `;
-  document.head.appendChild(antiFlicker);
-
-  // Применяем тему сразу (до загрузки страницы)
-  const savedTheme = localStorage.getItem("theme");
-  const isDark = savedTheme === "dark";
-  document.documentElement.classList.toggle("dark", isDark);
-  document.documentElement.setAttribute("data-theme", isDark ? "dark" : "light");
-
-  // Удаляем блокировку анимации после загрузки
-  setTimeout(() => {
-    document.head.removeChild(antiFlicker);
-  }, 100);
-})();
-
-// 2. ОБЫЧНЫЙ КОД ПОСЛЕ ЗАГРУЗКИ (для кнопки, favicon и т.д.)
-document.addEventListener("DOMContentLoaded", function() {
-  const toggleBtn = document.getElementById("themeToggle");
-  const body = document.body;
-  const logoImg = document.getElementById("siteLogo");
-
-  function changeFavicon(isDark) {
-    const iconPath = isDark ? "/static/icon-night.png" : "/static/icon.png";
-    const newIcon = document.createElement("link");
-    newIcon.rel = "icon";
-    newIcon.href = `${iconPath}?v=${Date.now()}`;
-
-    const oldIcon = document.querySelector("link[rel='icon']");
-    if (oldIcon) document.head.removeChild(oldIcon);
-    document.head.appendChild(newIcon);
-  }
-
-  function applyTheme(isDark) {
-    body.classList.toggle("dark", isDark);
-    document.documentElement.setAttribute("data-theme", isDark ? "dark" : "light");
-    changeFavicon(isDark);
-
-    if (logoImg) {
-      logoImg.src = isDark ? "/static/icon-night.png" : "/static/icon.png";
-    }
-  }
-
-  // Проверяем текущую тему
-  const currentTheme = localStorage.getItem("theme") || "light";
-  applyTheme(currentTheme === "dark");
-
-  // Вешаем обработчик на кнопку
-  if (toggleBtn) {
-    toggleBtn.addEventListener("click", () => {
-      const nowDark = !body.classList.contains("dark");
-      localStorage.setItem("theme", nowDark ? "dark" : "light");
-      applyTheme(nowDark);
-    });
-  }
-});
-</script>
+  
+  <script src="{{ url_for('static', filename='js/theme.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/mobile-menu.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/notifications.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/page-transitions.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/visibility.js') }}"></script>
+</body>
 </html>
