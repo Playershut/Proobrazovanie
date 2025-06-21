@@ -50,9 +50,10 @@ class Subject(db.Model):
     name: so.Mapped[str] = so.mapped_column(String(128))
 
     teachers: so.Mapped[List['User']] = so.relationship(
-        'Teacher', secondary=teacher_subject, back_populates='subjects'
+        'User', secondary=teacher_subject, back_populates='subjects'
     )
-    courses: so.WriteOnlyMapped[List['Course']] = so.relationship(back_populates='subject', cascade="all, delete-orphan")
+    courses: so.WriteOnlyMapped[List['Course']] = so.relationship(back_populates='subject',
+                                                                  cascade="all, delete-orphan")
 
     def __repr__(self):
         return f'<Subject {self.name}>'
@@ -99,7 +100,8 @@ class EducationalInstitution(db.Model):
     name: so.Mapped[str] = so.mapped_column(String(128), index=True, unique=True)
     settlement_id: so.Mapped[int] = so.mapped_column(ForeignKey('settlements.id'))
 
-    users: so.WriteOnlyMapped[List['User']] = so.relationship(back_populates='educational_institution', cascade="all, delete-orphan")
+    users: so.WriteOnlyMapped[List['User']] = so.relationship(back_populates='ei',
+                                                              cascade="all, delete-orphan")
 
     def __repr__(self):
         return f'<EducationalInstitution {self.name}>'
@@ -129,7 +131,8 @@ class Grade(db.Model):
     id: so.Mapped[int] = so.mapped_column(primary_key=True)
     name: so.Mapped[str] = so.mapped_column(String(8), index=True, unique=True)
 
-    courses: so.WriteOnlyMapped[List['Course']] = so.relationship(back_populates='grade', cascade="all, delete-orphan")
+    courses: so.WriteOnlyMapped[List['Course']] = so.relationship(back_populates='grade',
+                                                                  cascade="all, delete-orphan")
 
     def __repr__(self):
         return f'<Grade {self.name}>'
@@ -140,6 +143,8 @@ class Role(db.Model):
     __tablename__ = 'roles'
     id: so.Mapped[int] = so.mapped_column(primary_key=True)
     name: so.Mapped[str] = so.mapped_column(String(16), index=True, unique=True)
+    enrollments: so.Mapped[List['CourseEnrollment']] = so.relationship(back_populates='role')
+    users: so.Mapped[List['User']] = so.relationship(back_populates='role')
 
     def __repr__(self):
         return f'<Role {self.name}>'
@@ -159,7 +164,8 @@ class Notification(db.Model):
     message: so.Mapped[str] = so.mapped_column(Text, nullable=False)
     link: so.Mapped[Optional[str]] = so.mapped_column(String(256))
     is_read: so.Mapped[bool] = so.mapped_column(Boolean, default=False)
-    timestamp: so.Mapped[datetime] = so.mapped_column(DateTime, default=lambda: datetime.now(timezone.utc))
+    timestamp: so.Mapped[datetime] = so.mapped_column(DateTime,
+                                                      default=lambda: datetime.now(timezone.utc))
 
     user: so.Mapped['User'] = so.relationship(back_populates='notifications')
 
@@ -188,9 +194,12 @@ class Course(db.Model):
     grade_id: so.Mapped[int] = so.mapped_column(ForeignKey('grades.id'), nullable=False)
     grade: so.Mapped['Grade'] = so.relationship(back_populates='courses')
 
-    pages: so.WriteOnlyMapped[List['Page']] = so.relationship(back_populates='course', cascade="all, delete-orphan")
-    assignments: so.WriteOnlyMapped[List['Assignment']] = so.relationship(back_populates='course', cascade="all, delete-orphan")
-    enrollments: so.WriteOnlyMapped[List['CourseEnrollment']] = so.relationship(back_populates='course', cascade="all, delete-orphan")
+    pages: so.WriteOnlyMapped[List['Page']] = so.relationship(back_populates='course',
+                                                              cascade="all, delete-orphan")
+    assignments: so.WriteOnlyMapped[List['Assignment']] = so.relationship(back_populates='course',
+                                                                          cascade="all, delete-orphan")
+    enrollments: so.Mapped[List['CourseEnrollment']] = so.relationship(back_populates='course',
+                                                                                cascade="all, delete-orphan")
 
     def __repr__(self):
         return f'<Course {self.title}>'
@@ -205,9 +214,10 @@ class CourseEnrollment(db.Model):
     __tablename__ = 'course_enrollments'
     user_id: so.Mapped[int] = so.mapped_column(ForeignKey('users.id'), primary_key=True)
     course_id: so.Mapped[int] = so.mapped_column(ForeignKey('courses.id'), primary_key=True)
-    enrollment_date: so.Mapped[datetime] = so.mapped_column(DateTime, default=lambda: datetime.now(timezone.utc))
+    enrollment_date: so.Mapped[datetime] = so.mapped_column(DateTime,
+                                                            default=lambda: datetime.now(timezone.utc))
     # Роль пользователя ВНУТРИ ЭТОГО КУРСА
-    role_id: so.Mapped[int] = so.mapped_column(Integer, default=1, nullable=False)
+    role_id: so.Mapped[int] = so.mapped_column(ForeignKey('roles.id'), default=1, nullable=False)
     role: so.Mapped['Role'] = so.relationship(back_populates='enrollments')
 
     user: so.Mapped['User'] = so.relationship(back_populates='enrollments')
@@ -230,7 +240,8 @@ class Assignment(db.Model):
     due_date: so.Mapped[datetime] = so.mapped_column(DateTime, nullable=False)
 
     course: so.Mapped['Course'] = so.relationship(back_populates='assignments')
-    submissions: so.WriteOnlyMapped[List['Submission']] = so.relationship(back_populates='assignment', cascade="all, delete-orphan")
+    submissions: so.WriteOnlyMapped[List['Submission']] = so.relationship(back_populates='assignment',
+                                                                          cascade="all, delete-orphan")
 
     def __repr__(self):
         return f'<Assignment {self.title} (Course:{self.course_id})>'
@@ -245,7 +256,8 @@ class Submission(db.Model):
     id: so.Mapped[int] = so.mapped_column(primary_key=True)
     assignment_id: so.Mapped[int] = so.mapped_column(ForeignKey('assignments.id'), nullable=False)
     student_id: so.Mapped[int] = so.mapped_column(ForeignKey('users.id'), nullable=False)
-    submission_date: so.Mapped[datetime] = so.mapped_column(DateTime, default=lambda: datetime.now(timezone.utc))
+    submission_date: so.Mapped[datetime] = so.mapped_column(DateTime,
+                                                            default=lambda: datetime.now(timezone.utc))
     file_link: so.Mapped[Optional[str]] = so.mapped_column(String(256))
     text_submission: so.Mapped[Optional[str]] = so.mapped_column(Text)
     grade: so.Mapped[Optional[float]] = so.mapped_column(Float)
@@ -270,7 +282,7 @@ class User(UserMixin, db.Model):
     password_hash: so.Mapped[Optional[str]] = so.mapped_column(String(256))
     full_name: so.Mapped[str] = so.mapped_column(String(64))
     about: so.Mapped[Optional[str]] = so.mapped_column(String(256))
-    educational_institution_id: so.Mapped[int] = so.mapped_column(
+    educational_institution: so.Mapped[int] = so.mapped_column(
         ForeignKey('educational_institutions.id'),
         index=True, nullable=True)
 
@@ -279,7 +291,7 @@ class User(UserMixin, db.Model):
     role: so.Mapped['Role'] = so.relationship(back_populates='users')
 
     # Образовательное учреждение
-    educational_institution: so.Mapped['EducationalInstitution'] = so.relationship(
+    ei: so.Mapped['EducationalInstitution'] = so.relationship(
         back_populates='users')
 
     followed: so.Mapped[List['User']] = so.relationship(
@@ -292,16 +304,25 @@ class User(UserMixin, db.Model):
     )
 
     # Список курсов, которые пользователь преподает (для учителей)
-    courses_taught: so.WriteOnlyMapped[List['Course']] = so.relationship('Course', back_populates='teacher')
+    courses_taught: so.WriteOnlyMapped[List['Course']] = so.relationship('Course',
+                                                                         back_populates='teacher')
     # Зачисления пользователя на курсы (для студентов и учителей)
-    enrollments: so.WriteOnlyMapped[List['CourseEnrollment']] = so.relationship('CourseEnrollment', back_populates='user', cascade="all, delete-orphan")
+    enrollments: so.WriteOnlyMapped[List['CourseEnrollment']] = so.relationship('CourseEnrollment',
+                                                                                back_populates='user',
+                                                                                cascade="all, delete-orphan")
     # Сданные работы пользователя
-    submissions: so.WriteOnlyMapped[List['Submission']] = so.relationship('Submission', back_populates='student', cascade="all, delete-orphan")
+    submissions: so.WriteOnlyMapped[List['Submission']] = so.relationship('Submission',
+                                                                          back_populates='student',
+                                                                          cascade="all, delete-orphan")
 
-    pages: so.WriteOnlyMapped['Page'] = so.relationship(back_populates='author', cascade="all, delete-orphan")
-    reviews: so.Mapped[List['Review']] = so.relationship(back_populates='author', cascade="all, delete-orphan")
-    notifications: so.WriteOnlyMapped['Notification'] = so.relationship(back_populates='user', cascade="all, delete-orphan")
-    subjects: so.Mapped[List['Subject']] = so.relationship('Subject', secondary=teacher_subject, back_populates='teachers')
+    pages: so.WriteOnlyMapped['Page'] = so.relationship(back_populates='author',
+                                                        cascade="all, delete-orphan")
+    reviews: so.Mapped[List['Review']] = so.relationship(back_populates='author',
+                                                         cascade="all, delete-orphan")
+    notifications: so.WriteOnlyMapped['Notification'] = so.relationship(back_populates='user',
+                                                                        cascade="all, delete-orphan")
+    subjects: so.Mapped[List['Subject']] = so.relationship('Subject', secondary=teacher_subject,
+                                                           back_populates='teachers')
 
     def set_password(self, password):
         """Устанавливает хэш пароля для пользователя."""
@@ -383,14 +404,16 @@ class Page(db.Model):
     name: so.Mapped[str] = so.mapped_column(String(128), index=True)
     description: so.Mapped[Optional[str]] = so.mapped_column(String(512))
     teacher_id: so.Mapped[int] = so.mapped_column(ForeignKey(User.id), index=True)
-    timestamp: so.Mapped[datetime] = so.mapped_column(DateTime, default=lambda: datetime.now(timezone.utc))
+    timestamp: so.Mapped[datetime] = so.mapped_column(DateTime,
+                                                      default=lambda: datetime.now(timezone.utc))
     link: so.Mapped[Optional[str]] = so.mapped_column(String(256))
     original_filename: so.Mapped[Optional[str]] = so.mapped_column(String(256))
     average_rating: so.Mapped[float] = so.mapped_column(Float(1), default=0)
     course_id: so.Mapped[int] = so.mapped_column(ForeignKey('courses.id'), index=True, nullable=False)
     type_of_work: so.Mapped[int] = so.mapped_column(ForeignKey(TypeOfWork.id), index=True)
 
-    reviews: so.Mapped[List['Review']] = so.relationship(back_populates='page', cascade="all, delete-orphan")
+    reviews: so.Mapped[List['Review']] = so.relationship(back_populates='page',
+                                                         cascade="all, delete-orphan")
     author: so.Mapped['User'] = so.relationship(back_populates='pages')
     tow: so.Mapped['TypeOfWork'] = so.relationship(back_populates='pages')
     course: so.Mapped['Course'] = so.relationship(back_populates='pages')
@@ -407,7 +430,8 @@ class Review(db.Model):
     __tablename__ = 'reviews'
     id: so.Mapped[int] = so.mapped_column(primary_key=True)
     rate: so.Mapped[int] = so.mapped_column(Integer)
-    timestamp: so.Mapped[datetime] = so.mapped_column(DateTime, index=True, default=lambda: datetime.now(timezone.utc))
+    timestamp: so.Mapped[datetime] = so.mapped_column(DateTime, index=True,
+                                                      default=lambda: datetime.now(timezone.utc))
     comment: so.Mapped[str] = so.mapped_column(String(256))
     author_id: so.Mapped[int] = so.mapped_column(ForeignKey(User.id), index=True)
     page_id: so.Mapped[int] = so.mapped_column(ForeignKey(Page.id), index=True)

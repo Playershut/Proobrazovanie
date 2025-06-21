@@ -4,6 +4,8 @@ from urllib.parse import urlsplit
 
 import sqlalchemy as sa
 from PIL import Image
+from sqlalchemy.orm import aliased, joinedload, selectinload
+
 from app import app, db
 from app.email import send_password_reset_email
 from app.forms import (
@@ -11,12 +13,12 @@ from app.forms import (
     EditPageForm, ResetPasswordRequestForm, ResetPasswordForm, SearchForm, EmptyForm
 )
 from app.models import User, Subject, Page, Review, Notification, Region, Settlement, \
-    EducationalInstitution
+    EducationalInstitution, Course, CourseEnrollment
 from flask import jsonify
 from flask import render_template, flash, redirect, url_for, request, current_app, abort, \
     send_from_directory, Response, Blueprint
 from flask_login import current_user, login_user, logout_user, login_required
-from sqlalchemy import or_, func
+from sqlalchemy import or_, func, tuple_
 from sqlalchemy.sql import text
 from werkzeug.utils import secure_filename
 
@@ -49,9 +51,27 @@ def index():
     Домашняя страница, отображает последние статьи.
     """
     page_num = request.args.get('page', 1, type=int)
-    query = sa.select(Page).order_by(Page.timestamp.desc())
+
+    query = sa.select(Course).options(
+        joinedload(Course.teacher),
+        selectinload(Course.enrollments).joinedload(CourseEnrollment.user)
+    ).group_by(Course.id)
+
     posts = db.paginate(query, page=page_num, per_page=app.config['POSTS_PER_PAGE'],
                         error_out=False)
+
+    posts_for_template = [
+        {
+            'course': course_item,
+            'creator_username': course_item.teacher.username if course_item.teacher else None,
+            'collaborator_username': next(
+                (enrollment.user.username for enrollment in course_item.enrollments
+                 if enrollment.role_id == 2 and enrollment.user),
+                None
+            )
+        }
+        for course_item in posts.items
+    ]
 
     next_url = url_for('index', page=posts.next_num) if posts.has_next else None
     prev_url = url_for('index', page=posts.prev_num) if posts.has_prev else None
@@ -59,7 +79,7 @@ def index():
     return render_template(
         'index.html',
         title='Домашняя страница',
-        posts=posts.items,
+        posts=posts_for_template,
         next_url=next_url,
         prev_url=prev_url
     )
@@ -191,7 +211,7 @@ def edit_profile():
                 return redirect(url_for('edit_profile'))
 
             target_size = min(current_app.config['MAX_IMAGE_SIZE'])
-            
+
             width, height = img.size
 
             if width > height:
@@ -200,7 +220,7 @@ def edit_profile():
             else:
                 new_width = target_size
                 new_height = int(height * (target_size / width))
-                
+
             img = img.resize((new_width, new_height), Image.LANCZOS)
 
             left = (new_width - target_size) / 2
@@ -216,7 +236,7 @@ def edit_profile():
             img.save(final_avatar_path, optimize=True)
 
             flash('Ваш аватар успешно обновлен!')
-            
+
         current_user.username = form.username.data
         current_user.full_name = form.full_name.data
         current_user.about = form.about.data

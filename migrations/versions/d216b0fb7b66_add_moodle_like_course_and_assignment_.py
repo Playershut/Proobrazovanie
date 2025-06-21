@@ -38,7 +38,7 @@ def upgrade():
         batch_op.create_foreign_key(None, 'educational_institutions', ['educational_institution'],
                                     ['id'])
         batch_op.create_foreign_key(None, 'roles', ['role_id'], ['id'])
-        batch_op.create_index(batch_op.f('ix_users_educational_institution_id'),
+        batch_op.create_index(batch_op.f('ix_users_educational_institution'),
                               ['educational_institution'], unique=False)
         batch_op.create_index(batch_op.f('ix_users_email'), ['email'], unique=True)
         batch_op.create_index(batch_op.f('ix_users_username'), ['username'], unique=True)
@@ -183,7 +183,7 @@ def downgrade():
     with op.batch_alter_table('users', schema=None) as batch_op:
         batch_op.drop_index(batch_op.f('ix_users_username'))
         batch_op.drop_index(batch_op.f('ix_users_email'))
-        batch_op.drop_index(batch_op.f('ix_users_educational_institution_id'))
+        batch_op.drop_index(batch_op.f('ix_users_educational_institution'))
 
     op.drop_table('users')
     with op.batch_alter_table('roles', schema=None) as batch_op:

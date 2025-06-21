@@ -1,0 +1,64 @@
+<div class="card mb-3 shadow-sm border-0 post-card" onclick="window.location.href='{{ url_for('page', id=post_detail.course.id) }}'">
+  <div class="card-body p-0">
+    <div class="d-flex p-2 p-md-3">
+      <div class="flex-grow-1 d-flex flex-column post-content">
+        <!-- Название поста -->
+        <div class="page-title mb-1 mb-md-2">
+          {{ post_detail.course.title }}
+        </div>
+        <div class="page-description mb-1 mb-md-2">
+          {{ post_detail.course.description }}
+        </div>
+        <div class="page-authors mb-1 mb-md-2">
+          Создатель: **{{ post_detail.creator_username }}**
+          {% if post_detail.collaborator_username %}
+            <br>Соавтор: **{{ post_detail.collaborator_username }}**
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+    /* Адаптация для мобильных */
+  @media (max-width: 768px) {
+    .post-card {
+      border-radius: 10px !important;
+      margin-bottom: 12px !important;
+    }
+
+    .avatar-container {
+      width: 44px !important;
+      height: 44px !important;
+    }
+
+    .page-title {
+      -webkit-line-clamp: 2 !important;
+      line-height: 1.25 !important;
+      margin-bottom: 8px !important;
+    }
+
+    .date-footer {
+      font-size: 0.7rem !important;
+    }
+
+    .profile-link {
+      max-width: 90% !important;
+    }
+  }
+</style>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('.avatar').forEach(img => {
+    if (img.complete) {
+      img.classList.add('loaded');
+    } else {
+      img.addEventListener('load', function() {
+        this.classList.add('loaded');
+      });
+    }
+  });
+});
+
+</script>
