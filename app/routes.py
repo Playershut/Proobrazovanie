@@ -10,7 +10,7 @@ from app.forms import (
     LoginForm, RegistrationForm, EditProfileForm, PageAddForm, ReviewAddForm,
     EditPageForm, ResetPasswordRequestForm, ResetPasswordForm, SearchForm, EmptyForm
 )
-from app.models import Teacher, Subject, Page, Review, Notification, Region, Settlement, \
+from app.models import User, Subject, Page, Review, Notification, Region, Settlement, \
     EducationalInstitution
 from flask import jsonify
 from flask import render_template, flash, redirect, url_for, request, current_app, abort, \
@@ -75,7 +75,7 @@ def login():
 
     form = LoginForm()
     if form.validate_on_submit():
-        user_obj = db.session.scalar(sa.select(Teacher).where(Teacher.username == form.username.data))
+        user_obj = db.session.scalar(sa.select(User).where(User.username == form.username.data))
         if user_obj is None or not user_obj.check_password(form.password.data):
             flash('Неверный логин или пароль')
             return redirect(url_for('login'))
@@ -107,7 +107,7 @@ def register():
 
     form = RegistrationForm()
     if form.validate_on_submit():
-        user_obj = Teacher(
+        user_obj = User(
             username=form.username.data,
             email=form.email.data,
             full_name=form.full_name.data,
@@ -131,7 +131,7 @@ def user(username):
     """
     Профиль пользователя, отображает его статьи.
     """
-    user_obj = db.first_or_404(sa.select(Teacher).where(Teacher.username == username))
+    user_obj = db.first_or_404(sa.select(User).where(User.username == username))
     page_num = request.args.get('page', 1, type=int)
     query = user_obj.pages.select().order_by(Page.timestamp.desc())
     posts = db.paginate(query, page=page_num,
@@ -245,7 +245,7 @@ def follow(username):
     """
     form = EmptyForm()
     if form.validate_on_submit():
-        user_to_follow = db.session.scalar(sa.select(Teacher).where(Teacher.username == username))
+        user_to_follow = db.session.scalar(sa.select(User).where(User.username == username))
         if user_to_follow is None:
             flash('Пользователь не найден.')
             return redirect(url_for('index'))
@@ -266,7 +266,7 @@ def unfollow(username):
     """
     form = EmptyForm()
     if form.validate_on_submit():
-        user_to_unfollow = db.session.scalar(sa.select(Teacher).where(Teacher.username == username))
+        user_to_unfollow = db.session.scalar(sa.select(User).where(User.username == username))
         if user_to_unfollow is None:
             flash('Пользователь не найден.')
             return redirect(url_for('index'))
@@ -318,7 +318,7 @@ def explore():
             or_(
                 func.lower(Page.name).like(search_like),
                 func.lower(Page.description).like(search_like),
-                func.lower(Teacher.full_name).like(search_like)
+                func.lower(User.full_name).like(search_like)
             )
         ).join(Page.author)
 
@@ -545,7 +545,7 @@ def reset_password_request():
     form = ResetPasswordRequestForm()
     if form.validate_on_submit():
         user_obj = db.session.scalar(
-            sa.select(Teacher).where(Teacher.email == form.email.data)
+            sa.select(User).where(User.email == form.email.data)
         )
         if user_obj:
             send_password_reset_email(user_obj)
@@ -561,7 +561,7 @@ def reset_password(token):
     """
     if current_user.is_authenticated:
         return redirect(url_for('index'))
-    user_obj = Teacher.verify_reset_password_token(token)
+    user_obj = User.verify_reset_password_token(token)
     if not user_obj:
         flash('Ссылка для сброса пароля недействительна или устарела.')
         return redirect(url_for('index'))

@@ -9,7 +9,7 @@ from wtforms.fields.simple import TextAreaField, FileField
 from wtforms.validators import DataRequired, ValidationError, Email, EqualTo, Length
 
 from app import db
-from app.models import Teacher, Subject, EducationalInstitution, Grade, TypeOfWork, Region, Settlement
+from app.models import User, Subject, EducationalInstitution, Grade, TypeOfWork, Region, Settlement
 
 
 class LoginForm(FlaskForm):
@@ -46,12 +46,12 @@ class RegistrationForm(FlaskForm):
                                db.session.execute(sa.select(Region)).scalars().all()]
 
     def validate_username(self, username):
-        user = db.session.scalar(sa.select(Teacher).where(Teacher.username == username.data))
+        user = db.session.scalar(sa.select(User).where(User.username == username.data))
         if user is not None:
             raise ValidationError('Пожалуйста, используйте другой логин')
 
     def validate_email(self, email):
-        user = db.session.scalar(sa.select(Teacher).where(Teacher.email == email.data))
+        user = db.session.scalar(sa.select(User).where(User.email == email.data))
         if user is not None:
             raise ValidationError('Пожалуйста, используйте другой почтовый адрес')
 
@@ -82,7 +82,7 @@ class EditProfileForm(FlaskForm):
 
 def validate_username(self, username):
     if username.data != self.original_username:
-        user = db.session.scalar(sa.select(Teacher).where(Teacher.username == self.username.data))
+        user = db.session.scalar(sa.select(User).where(User.username == self.username.data))
         if user is not None:
             raise ValidationError('Пожалуйста, используйте другоой логин')
 
@@ -164,4 +164,3 @@ class SearchForm(FlaskForm):
         self.types_of_work.choices = [(tow.id, tow.name) for tow in
                                       TypeOfWork.query.order_by(TypeOfWork.id).all()]
         self.subjects.choices = [(s.id, s.name) for s in Subject.query.order_by(Subject.id).all()]
-        
