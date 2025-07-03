@@ -1,0 +1,34 @@
+<div class="modal fade" id="followingModal" tabindex="-1" role="dialog" aria-labelledby="followingModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="followingModalLabel">Подписки</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Закрыть">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        {% for followed in user.followed %}
+          <div class="modal-user-item">
+            <div class="modal-user-info">
+              <img src="{{ followed.avatar(32) }}" alt="Аватар" class="modal-user-avatar">
+              <a href="{{ url_for('user', username=followed.username) }}" class="modal-user-name">
+                {{ followed.full_name or followed.username }}
+              </a>
+            </div>
+            {% if current_user != followed %}
+              <form method="post" action="{{ url_for('follow' if not current_user.is_following(followed) else 'unfollow', username=followed.username) }}">
+                {{ form.hidden_tag() }}
+                <button type="submit" class="modal-btn {% if not current_user.is_following(followed) %}modal-btn-outline{% else %}modal-btn-primary{% endif %}">
+                  {{ 'Подписаться' if not current_user.is_following(followed) else 'Отписаться' }}
+                </button>
+              </form>
+            {% endif %}
+          </div>
+        {% else %}
+          <p>Пользователь ни на кого не подписан.</p>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>

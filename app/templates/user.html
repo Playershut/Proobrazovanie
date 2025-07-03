@@ -1,252 +1,11 @@
 {% extends "base.html" %}
 
+{% block head %}
+  {{ super() }}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/profile.css') }}">
+{% endblock %}
+
 {% block content %}
-<style>
-  :root {
-    --color-card-bg: #ffffff;
-    --color-accent: #007bff;
-    --color-body-text: #212529;
-    --color-muted-text: #6c757d;
-    --color-border: #dee2e6;
-  }
-
-  .profile-wrapper {
-    max-width: 800px;
-    margin: 40px auto;
-    padding: 20px;
-    color: var(--color-body-text);
-  }
-
-  .profile-card {
-    background-color: var(--color-body-bg);
-    border-radius: 20px;
-    padding: 30px;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    box-shadow: 0 5px 20px var(--color-accent);
-    
-  }
-
-  @media (min-width: 768px) {
-    .profile-card {
-      flex-direction: row;
-      align-items: center;
-    }
-  }
-
-  .avatar {
-    width: 130px;
-    height: 130px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 4px solid var(--color-accent);
-  }
-
-  .profile-info {
-    flex-grow: 1;
-  }
-
-  .profile-name {
-    font-size: 24px;
-    font-weight: bold;
-  }
-
-  .profile-about {
-    margin-top: 10px;
-    white-space: pre-line;
-    color: var(--color-muted-text);
-    font-size: 14px;
-  }
-
-  .stats {
-    display: flex;
-    gap: 40px;
-    margin-top: 20px;
-    font-weight: 500;
-  }
-
-  .stats a {
-    color: var(--color-accent);
-    text-decoration: none;
-    text-align: center;
-  }
-
-  .stats span {
-    display: block;
-    font-size: 13px;
-    color: var(--color-muted-text);
-    margin-top: 4px;
-  }
-
-  .action-btn {
-    margin-top: 20px;
-  }
-
-  .btn-primary,
-  .btn-outline {
-    padding: 10px 20px;
-    border-radius: 10px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    font-size: 14px;
-  }
-
-  .btn-primary {
-    background-color: var(--color-accent);
-    color: white;
-    border: none;
-  }
-
-  .btn-primary:hover {
-    filter: brightness(1.1);
-  }
-
-  .btn-outline {
-    background: none;
-    border: 1px solid var(--color-accent);
-    color: var(--color-accent);
-  }
-
-  .btn-outline:hover {
-    background-color: var(--color-accent);
-    color: white;
-  }
-
-  .post-list {
-    margin-top: 40px;
-  }
-
-  .pagination {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 20px;
-    font-size: 14px;
-  }
-
-  .pagination a {
-    color: var(--color-accent);
-    text-decoration: none;
-  }
-
-  .pagination a.disabled {
-    opacity: 0.4;
-    pointer-events: none;
-  }
-
-  /* Стили для модальных окон */
-  .modal-content {
-    border-radius: 15px;
-    border: none;
-    box-shadow: 0 5px 20px var(--color-accent);
-  }
-
-  .modal-header {
-    border-bottom: 1px solid var(--color-border);
-    padding: 15px 20px;
-  }
-
-  .modal-title {
-    font-weight: 600;
-    font-size: 18px;
-  }
-
-  .modal-body {
-    padding: 20px;
-  }
-
-  .close {
-    font-size: 28px;
-    font-weight: 300;
-    color: var(--color-primary);
-    opacity: 1;
-  }
-
-  /* Стили для элементов в модальных окнах */
-  .modal-title {
-    color: var(--color-secondary-text) !important;
-    font-weight: 600;
-    font-size: 18px;
-}
-  .modal-content {
-    position: relative;
-    display: -ms-flexbox;
-    display: flex
-;
-    -ms-flex-direction: column;
-    flex-direction: column;
-    width: 100%;
-    pointer-events: auto;
-    background-color: var(--color-body-bg) !important;
-    background-clip: padding-box;
-    border: 1px solid rgba(0, 0, 0, .2);
-    border-radius: 1.1rem;
-    outline: 0;
-}
-  .modal-user-item {
-    display: flex;
-    justify-content: space-between;
-    
-    align-items: center;
-    padding: 10px 0;
-    border-bottom: 1px solid var(--color-border);
-  }
-
-  .modal-user-item:last-child {
-    border-bottom: none;
-  }
-
-  .modal-user-info {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .modal-user-avatar {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    object-fit: cover;
-  }
-
-  .modal-user-name {
-    font-weight: 500;
-    color: var(--color-body-text);
-  }
-
-  .modal-btn {
-    padding: 8px 16px;
-    border-radius: 8px;
-    font-weight: 500;
-    font-size: 14px;
-    min-width: 120px;
-    text-align: center;
-    transition: all 0.2s ease;
-  }
-
-  .modal-btn-primary {
-    background-color: var(--color-accent);
-    color: white;
-    border: none;
-  }
-
-  .modal-btn-primary:hover {
-    background-color: #0069d9;
-  }
-
-  .modal-btn-outline {
-    background: none;
-    border: 1px solid var(--color-accent);
-    color: var(--color-accent);
-  }
-
-  .modal-btn-outline:hover {
-    background-color: var(--color-accent);
-    color: white;
-  }
-</style>
-
 <div class="profile-wrapper">
   <div class="profile-card">
     <img src="{{ user.avatar(128) }}" alt="{{ user.full_name }}" class="avatar">
@@ -278,12 +37,15 @@
         {% else %}
         <a href="{{ url_for('edit_profile') }}" class="btn-outline">Редактировать профиль</a>
         {% endif %}
+        
+        <!-- Кнопка для генерации QR-кода -->
+        <button id="generateQrBtn" class="btn-outline">Получить QR-код</button>
       </div>
     </div>
   </div>
 
   <div class="post-list">
-    <h2 style="font-size: 20px; margin-bottom: 20px;">Посты</h2>
+    <h2>Посты</h2>
     {% for post in posts %}
       {% include "_post.html" %}
     {% endfor %}
@@ -295,76 +57,34 @@
   </div>
 </div>
 
-<!-- Модальное окно Подписчики -->
-<div class="modal fade" id="followersModal" tabindex="-1" role="dialog" aria-labelledby="followersModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-scrollable" role="document">
+<!-- Модальные окна -->
+{% include "modals/followers_modal.html" %}
+{% include "modals/following_modal.html" %}
+
+<!-- Модальное окно для QR-кода -->
+<div class="modal fade" id="qrCodeModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-sm" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="followersModalLabel">Подписчики</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Закрыть">
+        <h5 class="modal-title">QR-код профиля</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <div class="modal-body">
-        {% for follower in user.followers %}
-          <div class="modal-user-item">
-            <div class="modal-user-info">
-              <img src="{{ follower.avatar(32) }}" alt="Аватар" class="modal-user-avatar">
-              <a href="{{ url_for('user', username=follower.username) }}" class="modal-user-name">
-                {{ follower.full_name or follower.username }}
-              </a>
-            </div>
-            {% if current_user != follower %}
-              <form method="post" action="{{ url_for('follow' if not current_user.is_following(follower) else 'unfollow', username=follower.username) }}">
-                {{ form.hidden_tag() }}
-                <button type="submit" class="modal-btn {% if not current_user.is_following(follower) %}modal-btn-outline{% else %}modal-btn-primary{% endif %}">
-                  {{ 'Подписаться' if not current_user.is_following(follower) else 'Отписаться' }}
-                </button>
-              </form>
-            {% endif %}
-          </div>
-        {% else %}
-          <p>У пользователя пока нет подписчиков.</p>
-        {% endfor %}
+      <div class="modal-body text-center">
+        <div id="qrCodeContainer"></div>
+        <a id="downloadQrBtn" class="btn btn-primary mt-3" download="profile_qr.png">Скачать QR-код</a>
       </div>
     </div>
   </div>
 </div>
 
-<!-- Модальное окно Подписки -->
-<div class="modal fade" id="followingModal" tabindex="-1" role="dialog" aria-labelledby="followingModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-scrollable" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="followingModalLabel">Подписки</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Закрыть">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        {% for followed in user.followed %}
-          <div class="modal-user-item">
-            <div class="modal-user-info">
-              <img src="{{ followed.avatar(32) }}" alt="Аватар" class="modal-user-avatar">
-              <a href="{{ url_for('user', username=followed.username) }}" class="modal-user-name">
-                {{ followed.full_name or followed.username }}
-              </a>
-            </div>
-            {% if current_user != followed %}
-              <form method="post" action="{{ url_for('follow' if not current_user.is_following(followed) else 'unfollow', username=followed.username) }}">
-                {{ form.hidden_tag() }}
-                <button type="submit" class="modal-btn {% if not current_user.is_following(followed) %}modal-btn-outline{% else %}modal-btn-primary{% endif %}">
-                  {{ 'Подписаться' if not current_user.is_following(followed) else 'Отписаться' }}
-                </button>
-              </form>
-            {% endif %}
-          </div>
-        {% else %}
-          <p>Пользователь ни на кого не подписан.</p>
-        {% endfor %}
-      </div>
-    </div>
-  </div>
-</div>
+{% endblock %}
 
+{% block scripts %}
+{{ super() }}
+<!-- Подключаем библиотеку QRCode -->
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
+<!-- Подключаем наш скрипт -->
+<script src="{{ url_for('static', filename='js/profile_qr.js') }}"></script>
 {% endblock %}
